@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
@@ -153,15 +154,22 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
             </blockquote>
           ),
           // 이미지
-          img: ({ src, alt, ...props }) => (
-            <img
-              src={src}
-              alt={alt}
-              className="rounded-lg my-8 w-full"
-              loading="lazy"
-              {...props}
-            />
-          ),
+          img: ({ src, alt, ...props }) => {
+            if (!src) return null;
+            return (
+              <div className="relative w-full h-auto my-8 rounded-lg overflow-hidden">
+                <Image
+                  src={src}
+                  alt={alt || '이미지'}
+                  width={800}
+                  height={600}
+                  className="w-full h-auto"
+                  loading="lazy"
+                  {...props}
+                />
+              </div>
+            );
+          },
           // 테이블
           table: ({ children, ...props }) => (
             <div className="overflow-x-auto my-8">
