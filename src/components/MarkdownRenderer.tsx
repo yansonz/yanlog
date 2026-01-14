@@ -155,17 +155,16 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           ),
           // 이미지
           img: ({ src, alt, ...props }) => {
-            if (!src) return null;
+            if (!src || typeof src !== 'string') return null;
             return (
               <div className="relative w-full h-auto my-8 rounded-lg overflow-hidden">
                 <Image
                   src={src}
-                  alt={alt || '이미지'}
+                  alt={alt ? String(alt) : '이미지'}
                   width={800}
                   height={600}
                   className="w-full h-auto"
                   loading="lazy"
-                  {...props}
                 />
               </div>
             );
