@@ -7,6 +7,7 @@ import { Locale } from '@/types/post';
 import Link from 'next/link';
 import TableOfContents from '@/components/TableOfContents';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
+import QuestionTags from '@/components/QuestionTags';
 
 interface PostPageProps {
   params: Promise<{ locale: string; slug: string }>;
@@ -80,6 +81,11 @@ export default async function PostPage({ params }: PostPageProps) {
             <p className="text-lg text-neutral-600 dark:text-neutral-400 leading-relaxed">
               {post.frontmatter.description}
             </p>
+            
+            {/* 질문 태그 */}
+            {post.frontmatter.questions && post.frontmatter.questions.length > 0 && (
+              <QuestionTags questions={post.frontmatter.questions} />
+            )}
           </header>
           
           {/* 본문 */}

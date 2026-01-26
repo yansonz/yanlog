@@ -2,6 +2,11 @@
 
 export type Locale = 'ko' | 'en';
 
+export interface QuestionTag {
+  text: string;
+  anchor: string;
+}
+
 export interface PostFrontmatter {
   title: string;
   date: string;
@@ -11,6 +16,7 @@ export interface PostFrontmatter {
   locale: Locale;
   slug: string;
   draft?: boolean;
+  questions?: QuestionTag[];
 }
 
 export interface Post {
