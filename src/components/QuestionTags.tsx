@@ -17,7 +17,7 @@ export default function QuestionTags({ questions }: QuestionTagsProps) {
   };
 
   return (
-    <div className="mb-8">
+    <div className="mt-6 mb-8">
       <div className="flex flex-wrap gap-2">
         {questions.map((q, index) => (
           <button
