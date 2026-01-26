@@ -11,7 +11,8 @@
     "test:watch": "jest --watch",
     "convert:webp": "node scripts/convert-images-to-webp.js",
     "convert:webp:public": "node scripts/convert-images-to-webp.js public/images public/images",
-    "hook:image-convert": "node scripts/handle-image-conversion.js"
+    "hook:image-convert": "node scripts/handle-image-conversion.js",
+    "new:post": "node scripts/new-post.js"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
