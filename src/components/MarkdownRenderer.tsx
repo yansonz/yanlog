@@ -211,17 +211,24 @@ export default function MarkdownRenderer({ content, postSlug }: MarkdownRenderer
             </blockquote>
           ),
           // 이미지
-          img: ({ src, alt }) => {
+          img: ({ src, alt, width, height, ...props }) => {
             if (!src || typeof src !== 'string') return null;
+            
+            // width 또는 height 속성이 있으면 고정 크기 사용
+            const hasFixedSize = width !== undefined || height !== undefined;
+            const imgWidth = width !== undefined ? Number(width) : 800;
+            const imgHeight = height !== undefined ? Number(height) : 600;
+            
             return (
-              <span className="block relative w-full h-auto my-8 rounded-lg overflow-hidden">
+              <span className={`block relative my-8 rounded-lg overflow-hidden ${hasFixedSize ? '' : 'w-full'}`}>
                 <Image
                   src={src}
                   alt={alt ? String(alt) : '이미지'}
-                  width={800}
-                  height={600}
-                  className="w-full h-auto"
+                  width={imgWidth}
+                  height={imgHeight}
+                  className={hasFixedSize ? 'h-auto' : 'w-full h-auto'}
                   loading="lazy"
+                  {...props}
                 />
               </span>
             );
