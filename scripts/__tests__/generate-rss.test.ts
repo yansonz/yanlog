@@ -157,7 +157,7 @@ describe('FeedBuilder - 포스트 데이터 수집', () => {
           title: 'Post 2',
           date: '2025-02-16',
           description: 'Description 2',
-          tags: undefined,
+          tags: [],
           slug: 'post-2',
           locale: 'ko' as Locale,
         },
