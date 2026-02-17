@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AnalyticsProvider from "@/components/AnalyticsProvider";
+import RSSLink from "@/components/RSSLink";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,6 +26,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className="dark">
+      <head>
+        <RSSLink locale="ko" />
+        <RSSLink locale="en" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-neutral-950 text-neutral-50`}
       >

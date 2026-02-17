@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title><![CDATA[YAN SO's Blog - day1]]></title>
+    <link>https://yanlog.yanbert.com/ko/tag/day1/</link>
+    <description><![CDATA[개인 기술 블로그 - day1 태그의 글]]></description>
+    <language>ko</language>
+    <lastBuildDate>Tue, 17 Feb 2026 14:01:57 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[첫 글]]></title>
+      <link>https://yanlog.yanbert.com/ko/blog/hello-blog/</link>
+      <description><![CDATA[첫 번째 블로그 포스트입니다.]]></description>
+      <pubDate>Mon, 19 Jan 2026 00:00:00 GMT</pubDate>
+      <guid>https://yanlog.yanbert.com/ko/blog/hello-blog/</guid>
+      <category>day1</category>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title><![CDATA[YAN SO's Blog - enterprise]]></title>
+    <link>https://yanlog.yanbert.com/ko/tag/enterprise/</link>
+    <description><![CDATA[개인 기술 블로그 - enterprise 태그의 글]]></description>
+    <language>ko</language>
+    <lastBuildDate>Tue, 17 Feb 2026 14:01:57 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[Kiro를 기업에서 쓰기 좋은 이유 (IAM Identity Center)]]></title>
+      <link>https://yanlog.yanbert.com/ko/blog/dear-team-lead-lets-adopt-kiro-20260211/</link>
+      <description><![CDATA[AWS를 이미 쓰고 있다면, Kiro 도입의 큰 장점 중 하나는 예산과 운영의 단순화다.]]></description>
+      <pubDate>Wed, 11 Feb 2026 00:00:00 GMT</pubDate>
+      <guid>https://yanlog.yanbert.com/ko/blog/dear-team-lead-lets-adopt-kiro-20260211/</guid>
+      <category>kiro</category>
+      <category>aws</category>
+      <category>enterprise</category>
+      <category>iam-identity-center</category>
+    </item>
+  </channel>
+</rss>

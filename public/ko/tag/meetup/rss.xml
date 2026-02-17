@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title><![CDATA[YAN SO's Blog - meetup]]></title>
+    <link>https://yanlog.yanbert.com/ko/tag/meetup/</link>
+    <description><![CDATA[개인 기술 블로그 - meetup 태그의 글]]></description>
+    <language>ko</language>
+    <lastBuildDate>Tue, 17 Feb 2026 14:01:57 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[Kiro 한국 사용자 모임 밋업 첫 번째 모임 준비 과정]]></title>
+      <link>https://yanlog.yanbert.com/ko/blog/kiro-korea-user-group-first-meetup-20260122/</link>
+      <description><![CDATA[Kiro 한국 사용자 모임을 만들게 된 배경과 첫 번째 모임까지 이야기]]></description>
+      <pubDate>Tue, 27 Jan 2026 00:00:00 GMT</pubDate>
+      <guid>https://yanlog.yanbert.com/ko/blog/kiro-korea-user-group-first-meetup-20260122/</guid>
+      <category>kiro</category>
+      <category>community</category>
+      <category>meetup</category>
+    </item>
+  </channel>
+</rss>

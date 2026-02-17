@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title><![CDATA[YAN SO's Blog - community]]></title>
+    <link>https://yanlog.yanbert.com/en/tag/community/</link>
+    <description><![CDATA[개인 기술 블로그 - community 태그의 글]]></description>
+    <language>en</language>
+    <lastBuildDate>Tue, 17 Feb 2026 14:01:57 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[Introducing Kiro Friends]]></title>
+      <link>https://yanlog.yanbert.com/en/blog/kiro-friends-introduction-20260217/</link>
+      <description><![CDATA[Kiro Friends - Developer personality analysis through Korean folklore characters]]></description>
+      <pubDate>Tue, 17 Feb 2026 00:00:00 GMT</pubDate>
+      <guid>https://yanlog.yanbert.com/en/blog/kiro-friends-introduction-20260217/</guid>
+      <category>kiro</category>
+      <category>developer</category>
+      <category>community</category>
+      <category>character</category>
+    </item>
+    <item>
+      <title><![CDATA[Preparing for the First Kiro Korea User Group Meetup]]></title>
+      <link>https://yanlog.yanbert.com/en/blog/kiro-korea-user-group-first-meetup-20260122/</link>
+      <description><![CDATA[The story behind creating the Kiro Korea User Group and our first meetup]]></description>
+      <pubDate>Tue, 27 Jan 2026 00:00:00 GMT</pubDate>
+      <guid>https://yanlog.yanbert.com/en/blog/kiro-korea-user-group-first-meetup-20260122/</guid>
+      <category>kiro</category>
+      <category>community</category>
+      <category>meetup</category>
+    </item>
+  </channel>
+</rss>

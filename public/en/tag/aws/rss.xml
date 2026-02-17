@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title><![CDATA[YAN SO's Blog - aws]]></title>
+    <link>https://yanlog.yanbert.com/en/tag/aws/</link>
+    <description><![CDATA[개인 기술 블로그 - aws 태그의 글]]></description>
+    <language>en</language>
+    <lastBuildDate>Tue, 17 Feb 2026 14:01:57 GMT</lastBuildDate>
+    <item>
+      <title><![CDATA[Why Kiro is Great for Enterprise (IAM Identity Center)]]></title>
+      <link>https://yanlog.yanbert.com/en/blog/dear-team-lead-lets-adopt-kiro-20260211/</link>
+      <description><![CDATA[If your company already uses AWS, one of the biggest advantages of adopting Kiro is simplified budgeting and operations.]]></description>
+      <pubDate>Wed, 11 Feb 2026 00:00:00 GMT</pubDate>
+      <guid>https://yanlog.yanbert.com/en/blog/dear-team-lead-lets-adopt-kiro-20260211/</guid>
+      <category>kiro</category>
+      <category>aws</category>
+      <category>enterprise</category>
+      <category>iam-identity-center</category>
+    </item>
+    <item>
+      <title><![CDATA[AWS Community Builders Day 2026 Recap]]></title>
+      <link>https://yanlog.yanbert.com/en/blog/aws-community-builders-day-2026-20260124/</link>
+      <description><![CDATA[My experience at AWS Community Builders Day 2026 in Korea]]></description>
+      <pubDate>Mon, 26 Jan 2026 00:00:00 GMT</pubDate>
+      <guid>https://yanlog.yanbert.com/en/blog/aws-community-builders-day-2026-20260124/</guid>
+      <category>aws</category>
+      <category>community-builders</category>
+      <category>event</category>
+    </item>
+  </channel>
+</rss>
