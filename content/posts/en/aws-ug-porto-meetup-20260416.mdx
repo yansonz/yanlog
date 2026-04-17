@@ -1,0 +1,59 @@
+---
+title: "Attending AWS Porto User Group Meetup"
+date: "2026-04-16"
+description: "A recap of attending the AWS User Group meetup in Braga, Portugal"
+tags: ["aws", "community", "meetup", "kiro", "devops", "portugal"]
+locale: "en"
+slug: "aws-ug-porto-meetup-20260416"
+draft: false
+questions:
+  - text: "Where was the AWS Porto User Group meetup held?"
+    anchor: "location"
+  - text: "What sessions were there?"
+    anchor: "sessions"
+  - text: "How to participate in overseas developer communities?"
+    anchor: "how-to-join"
+---
+
+<div id="location"></div>
+
+I attended the [AWS Porto User Group meetup](https://www.meetup.com/aws-porto-user-group/events/314072345) held in Braga, a city about an hour's drive from Porto. This was their first offline meetup of 2026 and the first time hosting an event outside of Porto. As anyone who has run a community would understand, securing speakers and venue sponsorship are the biggest challenges. This user group also seems to be trying various approaches to expand and sustain community participation. This meetup was co-hosted with the DevOps Braga community, and the venue was provided by Mercedes-Benz.io.
+
+![AWS Porto User Group meetup venue](https://images.yanbert.com/blog/images/aws-ug-porto-meetup-20260416/62E6759D-7EDE-4E2E-B3D7-AE5A37708B53.webp)
+
+While it was a DevOps meetup rather than my main interests of AI and Data, I enjoyed hearing about the challenges and use cases of leveraging AI in the DevOps space. I had expected the sessions to be in Portuguese and was considering whether to prepare interpretation or real-time subtitles, but fortunately, the entire event was conducted in English, so I had no trouble understanding the content.
+
+<div id="sessions"></div>
+
+**Talk 1: Honey, the Audience Broke My App Running in EKS / Jake Page(DevRel Engineer @mirrord)**
+
+[mirrord](https://github.com/metalbear-co/mirrord) is a tool that allows you to run local applications while sharing the network and environment of a Kubernetes pod. The concept is to intercept network and environment access from local processes and connect them to Kubernetes pods, making them behave as if they're using the remote environment.
+
+It's designed to solve multi-environment pain points like having to build multiple duplicate environments for development, going through deployment processes for bug fixes, and issues where things work locally but fail in staging or production environments. The demo showed deliberately generating abnormal requests to production traffic through a simple voting app, causing failures, then debugging locally and validating in the production environment without deployment.
+
+On one hand, I was curious about how well it operates in actual high-traffic service environments, as it captures all or part of the traffic, especially inbound traffic. Conceptually, being able to use VPC internal networks directly from local environments seems convenient for accessing VPC internal resources like databases, but conversely, the security risks also seem significant.
+
+![mirrord presentation](https://images.yanbert.com/blog/images/aws-ug-porto-meetup-20260416/7DD77BFE-2F1D-4B99-AACA-32689820F341.webp)
+
+**Talk 2: Spec-Driven AI Development with Kiro / Luiz Otávio Rodrigues(Product Solutions Architect @Kantar)**
+
+The session covered Kiro's core features like AI-DLC management, Powers, and Agents. It was impressive to hear him explain why Kiro is competitive as an AI development tool based on over 30 years of experience in the IT industry. The key message was:
+> AI works better when we treat it like a developer with clear specs, constraints, and direction.
+
+![Kiro presentation](https://images.yanbert.com/blog/images/aws-ug-porto-meetup-20260416/8F9E0233-1DB4-4C18-A932-83655587C6F0.webp)
+
+**Talk 3: Shift AI: Real-World Patterns for AI-Augmented Incident Response / João Aires(Site Reliability Engineer @Mercedes-Benz.io)**
+
+While AI-augmented incident response was the main topic, I found the introduction particularly interesting, which chronologically organized the issues that have been hot topics from the emergence of GPT to the present. Especially seeing the visual representation of how AI-related new concepts and terminology have been intensively emerging over the past 1-2 years, I couldn't help but smile bitterly as it overlapped with the image of developers worldwide suffering from FOMO. The speaker mentioned that they're recently adopting harness engineering concepts to build more robust and self-learning incident response agents. I could see the effort to incorporate the organization's knowledge and know-how into AI results.
+
+![AI incident response presentation](https://images.yanbert.com/blog/images/aws-ug-porto-meetup-20260416/4F7FE7E1-25D7-41DA-8D5D-9C6ED0913929.webp)
+
+After the presentations, I had a chance to talk with Luiz, who gave the Kiro-related presentation during the networking session. When I mentioned that I'm one of the AWS Korea User Group organizers and also run the Kiro Korea User Group, he greeted me warmly. I had brought some [Gatssn-Kiro](https://yanlog.yanbert.com/en/blog/kiro-friends-introduction-20260217/#1-gatssn-kiro-갓쓴키로---strategic-architect) NFC cards made for events in Korea, and I wrote Luiz's LinkedIn address (which was introduced during the presentation) on a card and gave it to him as a gift. He was so happy about it, which made me feel proud.
+
+![Networking time](https://images.yanbert.com/blog/images/aws-ug-porto-meetup-20260416/7DDDE817-C7F1-4D55-92FC-89C3D8A70A7A.webp)
+
+During my long-term travel, I've been forgetting about my main job and Kiro-related updates, playing around like a free spirit. It was a pleasant time to attend a tech meetup after a long while and talk with people.
+
+<div id="how-to-join"></div>
+
+AWS User Groups are a global community and commonly use meetup.com for event hosting, making it easy to find location-based events. If you have a chance to go abroad, I recommend looking for and attending community events in the region you're visiting.
