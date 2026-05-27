@@ -1,0 +1,170 @@
+---
+title: "Kiro User Interview #1 - Hee In Jung from VPPLAB"
+date: "2026-05-26"
+description: "How a renewable energy startup adopted Kiro across their team and changed their dev culture with Spec-Driven Development"
+tags: ["kiro", "interview", "community", "enterprise"]
+locale: "en"
+slug: "kiro-user-interview-001-20260526"
+draft: false
+---
+
+## Introduction
+
+The [Kiro Startups Credit Program](https://kiro.dev/blog/bringing-back-startup-credits/) is open again. Selected startups get up to a year of Kiro Pro+ credits applied directly to their AWS Organization account. I wanted to hear from someone actually using this program with their whole team. For the first interview, I sat down with [Hee In Jung](https://www.linkedin.com/in/evanjung/) from [VPPLAB](https://www.vpplab.kr/eng/main/), a renewable energy IT platform startup.
+
+---
+
+## About the Company and His Role
+
+**Q. Tell us about VPPLAB.**
+
+We run a renewable energy IT platform called 'flow-V'. Think of it as a Virtual Power Plant (VPP) platform.
+
+We forecast power generation for renewable energy operators (wind, solar), and handle bidding and power brokerage in the electricity market.
+
+The company started as the first in-house venture from POSCO Energy, and we've been around for about five years now. The renewable energy market moves fast with policy and regulatory changes, and Jeju Island plays a big role as a testbed for domestic renewable energy, so our headquarters is there. We also run a Seoul research office for development and R&D.
+
+We've grown to a meaningful scale in the domestic market. We're forecasting and operating around 1GW of wind power nationwide, which is one of the largest in Korea. Our forecast accuracy stays above 92% on average. In the Jeju wind bidding market specifically, we hold about 52% market share, so we've carved out a solid position.
+
+The global renewable energy market is growing fast, and we're scaling right along with it, continuously improving our platform and forecasting systems.
+
+**Q. What's your role there?**
+
+I joined as tech lead and senior backend developer, and now I also lead the data team. The team is about 7 people total: 4 on the dev side, 3 on data.
+
+---
+
+## Why Kiro
+
+**Q. How did you end up adopting Kiro?**
+
+I participated in the Amazon CodeWhisperer beta back when I was at AWS, so I've always kept an eye on AI coding assistants. When Amazon Q Developer came out I tried it, but the code quality wasn't there. Then Kiro launched, and the code quality and usability were just noticeably better.
+
+I told the team "let's try this," and while I was looking into buying a single account to test it, I found the Kiro for Startup Support promo page and applied right away. I also sent an inquiry email to our AWS account manager. The promo page closed after I sent the email, so applying early definitely helped.
+
+Approval took about two weeks. They asked about team size and funding stage, basically. We ended up getting $4,800 in credits for 10 people for a year, and the whole team has been using it since January.
+
+---
+
+## Why Kiro Over Other Tools - Spec-Driven Development
+
+**Q. What do you like most about Kiro?**
+
+Spec-Driven Development, hands down. Having the development flow organized around Requirement, Design, and Task documents just clicked for me. It feels less like a code generator and more like something that structures your entire development process.
+
+Honestly, if you're not going to use Spec-Driven, I'm not sure why you'd pick Kiro over alternatives. My main workflow is creating specs in the Kiro IDE, reviewing them, and working through them.
+
+**Q. How does it compare to CLI tools like Claude Code?**
+
+Claude Code gives you a lot of freedom, but that means more things to manage. You end up with files scattered everywhere. With Kiro, you write three documents well (Requirement, Design, Task) and development flows from there. No confusion for developers, the process is clear, and the output is consistent. That's especially valuable when you're working as a team.
+
+---
+
+## How the Team's Dev Process Changed
+
+**Q. What's the biggest change since adopting Kiro?**
+
+We shifted from "start with code" to "start with docs." Our current process looks like this:
+
+1. Product writes a spec
+2. Developer generates Spec documents in Kiro
+3. Review Requirement / Design / Task docs
+4. Loop back to product if needed
+5. Develop task by task
+
+Even team members who prefer CLI tools now pull the documents first and run from there.
+
+**Q. Does the team actually read and review the docs before coding?**
+
+We made it a team rule: all three documents must be read. Requirement especially is non-negotiable. One wrong requirement and the whole output goes sideways. Task execution is flexible based on personal style, but reviewing Requirement and Design upfront is mandatory.
+
+---
+
+## Team Operations Tip - Managing Global Steering
+
+**Q. What's the most important tip for running Kiro as a team?**
+
+Managing Global Steering files. When you're using it solo, you can be loose about it. But for a team, how you write those files directly affects the quality of what comes out.
+
+Some specific tips:
+
+- **Write in compressed English** - We compress the content and translate it to English to reduce token usage.
+- **Exclude build folders** - Explicitly exclude `build/`, `bin/`, etc. Otherwise it reads compiled files too and token usage can more than double.
+- **Define conventions and architecture rules** - Models often write code in ways you don't want. When multiple people are working on the same project, you need guardrails so everyone's output stays consistent. This is the first thing to set up.
+- **Mark core files as off-limits** - We added a note that certain files require human approval before modification.
+
+For operations, we created a separate guide repository and set up a shell script so team members can pull the Global Steering directory directly when cloning a repo. We notify the team to sync whenever it's updated.
+
+<figure>
+
+![Hee In's Kiro IDE screenshot](https://images.yanbert.com/blog/images/kiro-user-interview-001/kiro-ide-screenshot.webp)
+
+<figcaption>Hee In's Kiro IDE in action</figcaption>
+</figure>
+
+---
+
+## Using MCP
+
+**Q. You mentioned using MCP too?**
+
+Yeah, actively. We've connected Jira, Figma, and the IDE via MCP so we can handle most things without leaving Kiro. We're past the initial adoption phase and moving into more serious use of MCP and Powers.
+
+---
+
+## Real Productivity Wins
+
+**Q. Any concrete productivity examples?**
+
+Our data team had about 25 batch applications, all single Python script files. Over one month, using only Kiro, I added a framework, tests, and simulations, and completed the full migration solo. That's not something I could have finished in a month on my own.
+
+For feature work, tasks that would've taken 5 days are regularly coming in at 2-3 days. Since Claude Opus 4.6, the code quality has gotten noticeably better, which speeds things up even more.
+
+---
+
+## Model Selection Strategy
+
+**Q. How do you choose which model to use?**
+
+I almost never use Auto mode. The quality doesn't meet expectations, and I end up redoing things with Opus or Sonnet anyway. Better to just start with the right model.
+
+Our actual usage pattern:
+- **Writing Spec docs**: Sonnet 4.6
+- **Debugging**: Opus
+- **General development**: Mix of Sonnet and Opus
+
+I shared this as a guide with the team. It's how we balance credit usage with output quality.
+
+---
+
+## Pain Points and Workarounds
+
+**Q. What's been frustrating?**
+
+Two things.
+
+First, **terminal output truncation**. When running Python validation scripts with long output, the middle gets cut off. Our workaround is copying the command and running it directly in the terminal.
+
+Second, **context auto-summarization**. After summarization, it sometimes misreads the context. So when we hit around 70% context usage, we manually ask it to summarize everything, then open a fresh context and continue from there.
+
+---
+
+## Individual vs. Team Use
+
+**Q. What's the biggest difference between using Kiro solo vs. as a team?**
+
+Solo, you might not notice much difference from other tools. But for a team, convention consistency, output uniformity, and Global Steering management are critical. They make or break the experience. The same project structure can produce wildly different results across team members, so setting up guardrails is the first thing you need to do.
+
+---
+
+## Who Should Use Kiro
+
+**Q. Who would you recommend Kiro to?**
+
+If you're already comfortable with another AI tool, there's no need to force a switch. But if you want to try Spec-Driven Development, or you want your whole team building from the same playbook, Kiro is worth it.
+
+On the cost side, if you're already on AWS, Kiro billing shows up in your AWS bill, so you don't have to manage a separate subscription. That's a nice convenience.
+
+One practical tip: you need to set up an organization with AWS IAM Identity Center. If you're on an MSP or consolidated billing setup, org creation might be blocked. Just ask your MSP to open up the permissions and it'll work.
+
+Beyond coding, it's useful for data analysis and simulations too. I recommend it to anyone who hasn't tried it yet.
