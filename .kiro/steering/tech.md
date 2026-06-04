@@ -32,7 +32,6 @@ npm run build        # 프로덕션 빌드
 npm run lint         # ESLint 실행
 npm run test         # Jest 테스트
 npm run test:watch   # Jest watch 모드
-npm run convert:webp # 이미지 WebP 변환
 ```
 
 ## 경로 별칭
