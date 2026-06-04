@@ -1,0 +1,193 @@
+---
+title: "Kiro User Interview #2 - Ji Yeon Choi from Megazone Cloud"
+date: "2026-06-02"
+description: "How a frontend developer conquered state management with Kiro, and built her own AI collaboration guidelines using BDD + FSD"
+tags: ["kiro", "interview", "community", "frontend"]
+locale: "en"
+slug: "kiro-user-interview-002-20260602"
+draft: false
+---
+
+## Introduction
+
+For the second interview, I sat down with [Ji Yeon Choi](https://www.linkedin.com/in/jiyeon-choi-47ab9623a/) from [Megazone Cloud](https://www.megazone.com/). She's a frontend developer in her second year as an [AWS Community Builder](https://builder.aws.com/community/community-builders), actively involved in the community. Ji Yeon has been using Kiro as her main tool at both her current and previous companies, and has settled into her own AI collaboration approach centered around Skills and Spec Mode.
+
+---
+
+## Community Activities
+
+**Q. What's the most memorable experience you've had as a Community Builder?**
+
+Going to AWS re:Invent is the first thing that comes to mind. It really hit me that people from so many different countries and backgrounds could all come together around cloud technology. I remember thinking I need to work harder.
+
+The keynote had an impact on me too. Three years ago, specialization was the ideal. Now I could feel firsthand that you need to be a renaissance developer who has your own edge but can also do everything.
+
+**Q. You also went to JAWS DAYS this year?**
+
+There's this assumption that Japan is old-fashioned, so I was surprised to see how aggressively they're using generative AI. Their approach was a bit creative too. It's different from Korea. Like, we think about how to get AI agents to do work for us, but what I saw in Japan was more like building a boss who oversees and reviews your work.
+
+The atmosphere was different too. It felt like a real festival. People showed up in cosplay, someone had published an AWS-themed webcomic and was giving copies away. At the Postman booth they had their own AI embedded like an IDE on the right side, which I found really interesting. Watching the tools evolve was fun.
+
+---
+
+## First Experience with Kiro
+
+**Q. How did you first come across Kiro?**
+
+I heard about the preview through AWS community activities, and honestly, I was also curious about the cute character.
+
+At the time I was using autocompletion tools like Copilot for frontend work, but they didn't understand context, so I kept creating and deleting code in a loop. Other developers around me were saying the same thing: "It's just autocomplete, nothing more, nothing less."
+
+Then I saw the concept of Spec in Kiro for the first time, and I thought, 'this could be the anchor point for development history.' I had high expectations, and it actually delivered. Though what caught me off guard was that if you're vague, you get average results. That was actually how I first learned you need domain knowledge and need to have a real back-and-forth with the LLM.
+
+**Q. Have you used other tools too?**
+
+Codex might have improved, but the reasoning took so long I got tired of waiting. Claude Code meant jumping between windows constantly, so I stopped using it for actual work. It's not a huge gap, but Kiro's usability is better and Spec Mode triggers naturally, which is why I kept coming back.
+
+---
+
+## Becoming a Primary Tool
+
+**Q. Why do you use Kiro as your main tool?**
+
+It's complete out of the box, no extra plugins needed, and the accessibility is just so easy. It comes to me feeling lightweight, builds things on its own, and I can see it all. IDEs can be slower than CLI, but there's also the nature of frontend work, and personally I much prefer working with an LLM while looking at the code. I split it: frontend work in the IDE, infrastructure in CLI.
+
+---
+
+## Skills - Conquering State Management
+
+**Q. What feature do you use most these days?**
+
+Skills. I've registered skills specifically for state management, and state management is one of the heaviest parts of frontend work. There are all these interactions, overlapping situations with the server and user state, some parts that intersect and others that need to run independently. Every library has a different concept, so I used to spend a lot of time just reading docs.
+
+After registering those skills, it finds the right pattern right away, so the time savings are massive. And duplicate code dropped a lot too. When the context is similar but subtly different, I'd often end up building the same thing twice. That becomes dead code eventually. That kind of debugging is hard in frontend because it's not an error.
+
+<figure>
+
+![State management with Skill.md (1)](https://images.yanbert.com/blog/images/kiro-user-interview-002-20260602-skill-state-1.webp)
+
+<figcaption>State management with Skill.md (1)</figcaption>
+</figure>
+
+<figure>
+
+![State management with Skill.md (2)](https://images.yanbert.com/blog/images/kiro-user-interview-002-20260602-skill-state-2.webp)
+
+<figcaption>State management with Skill.md (2)</figcaption>
+</figure>
+
+<figure>
+
+![State management with Skill.md (3)](https://images.yanbert.com/blog/images/kiro-user-interview-002-20260602-skill-state-3.webp)
+
+<figcaption>State management with Skill.md (3)</figcaption>
+</figure>
+
+<figure>
+
+![State management with Skill.md (4)](https://images.yanbert.com/blog/images/kiro-user-interview-002-20260602-skill-state-4.webp)
+
+<figcaption>State management with Skill.md (4)</figcaption>
+</figure>
+
+---
+
+## Spec Mode and Trial and Error
+
+**Q. What's the hardest part of using Spec Mode?**
+
+Breaking down what you want to spec into proper work and assignee units. The difference between senior and junior developers comes down to seeing the full picture, I think. In Spec Mode, I'm the one who has to define and slice things up. And I try to intentionally question the AI output rather than trust it blindly, and review with the team, but that's not always easy in practice.
+
+**Q. What trial and error did you go through to get to how you work now?**
+
+There was a conflict problem when working with multiple AIs. I tried coding with Gemini, and we hit this back-and-forth overwriting situation where each AI was deleting the other's code. One AI makes something, the other deletes it, errors everywhere.
+
+That's when I realized I needed guidelines that any LLM could understand at minimum. For me, that became **BDD + FSD**, and now it's my own know-how.
+
+<figure>
+
+![Presenting BDD+FSD know-how at the Kiro User Meetup (Feb 2026)](https://images.yanbert.com/blog/images/kiro-user-interview-002-20260602-bdd-fsd-talk.webp)
+
+<figcaption>Presenting BDD+FSD know-how at the Kiro User Meetup (Feb 2026)</figcaption>
+</figure>
+
+---
+
+## Three Reasons Requirement Docs Matter
+
+**Q. Between Requirement, Design, and Task, which one do you focus on most?**
+
+Requirement docs, definitely. I think they matter the most.
+
+First, they're a **communication tool with non-developers**. When explaining to stakeholders, they become the history showing what I based the code on from the start.
+
+Second, they help with **developer-to-developer communication**. Honestly, nobody really reads Git issues or PRs. And in this age where AI is doing code review. If you put in the Requirement doc, you can much more strategically see how far things have gotten. Long-term, it saves tokens too.
+
+Third, they're a **static anchor point**. Task files are dynamic, right? So you need a static foundation, and that's the Requirement file. Even if it takes a bit longer, building out the spec is a worthwhile trade-off for the communication it enables later.
+
+---
+
+## How FSD Helped with AI Development
+
+**Q. How specifically did BDD + FSD help?**
+
+> BDD (Behavior-Driven Development): A framework for writing business requirements in plain language and converting them into automated tests
+
+> FSD (Feature-Sliced Design): An architectural methodology for structuring code by feature units
+
+With vibe coding, after `next create` you naturally end up with a feature-centric structure like `app/`, `components/`, `routing/`. But if you don't tell the AI clearly where a component begins and ends, you get bloated components, composite components, or it makes another button just because it looks slightly different.
+
+Setting up an FSD structure means when you write feature-unit docs in Requirements, things get built from the smallest unit up. The LLM then looks up the folder structure and works with that context, so you stop having to walk things back.
+
+---
+
+## Where It Still Falls Short - Animation and UX
+
+**Q. Is there anything that still doesn't work no matter how much you try?**
+
+Animation and fine-grained UI/UX. Human language is vague, so the LLM outputs the average. Describing animation effects like "it shoots out and then swoops in" to an LLM is genuinely hard.
+
+When that happens, I leave the parts Spec Mode can't cover rough, and do the detail work manually afterward. For animation, assigning roles by numbering divs and saying "do this and this" is kind of like drawing a picture. Then I tweak it bit by bit in Vibe Mode.
+
+I've tried Figma MCP too, and it pulls in components and typography pretty well. But animations are something the LLM just invents on its own sometimes, so there are still limits there.
+
+---
+
+## What Gets People Excited About Kiro
+
+**Q. What's the reaction when you promote Kiro in the community?**
+
+I think three things get the most reaction.
+
+First, **it's easy to get started**. It comes ready to use.
+
+Second, **the character is cute**. You can actually feel fondness for the tool.
+
+Third, **the docs stick around**. The ability to trace history is a pretty compelling point for developers.
+
+---
+
+## What Ji Yeon Wants from the Kiro Team
+
+**Q. If you could request one feature from the Kiro team?**
+
+Sometimes I ask something in Korean and a different language, like Japanese, gets mixed in. I never asked for that, so it's disorienting. It's a small issue but it seems like something that needs to keep getting fixed.
+
+---
+
+## My Career in the AI Era
+
+**Q. How do you feel as a frontend engineer in the age of AI coding?**
+
+For POCs, demos, and UX/UI, anything visual, frontend has become a great field to stand out in. But from a specialist perspective, honestly, the status feels like it's dropped a bit. Maybe it always felt that way.
+
+So I've changed my career direction. I decided that in the AI agent era, what drives it all is ultimately infrastructure. Not just operations, but infrastructure as the foundational technology that could one day produce tokens. Right now I'm doing an SA role with a mix of engineering, consulting, education, and workshops.
+
+**Q. Any final thoughts?**
+
+I genuinely relate to the feeling that LLMs are threatening our positions, and I've seen hints of it. But paradoxically, it means you can build more things faster. Shipping fast is important, but I'd encourage you to take those things directly to customers and get feedback. That's been incredibly valuable for me.
+
+---
+
+## References
+- [A Frontend Engineer's Perspective - Lessons from Trial and Error on How to Properly Use Kiro Spec Mode (feat. FSD and BDD)](https://github.com/awskrug/kiro-group/blob/1fee3a12d3d80624c6efcda16e5d30c17b3559ff/slides/2026-02-12/%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%94%EB%93%9C%20%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%20%EA%B4%80%EC%A0%90%20%20Kiro%20Spec%20%EB%AA%A8%EB%93%9C%EB%A5%BC%20%EC%A0%9C%EB%8C%80%EB%A1%9C%20%EC%93%B0%EA%B8%B0%20%EC%9C%84%ED%95%9C%20%EC%8B%9C%ED%96%89%EC%B0%A9%EC%98%A4%EB%A1%9C%20%EB%B0%B0%EC%9A%B4%20%EA%B2%83%EB%93%A4%20(feat_%20FSD%EC%99%80%20BDD).pdf) | Ji Yeon Choi
