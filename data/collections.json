@@ -1,0 +1,50 @@
+{
+  "kiro-user-interview": {
+    "ko": {
+      "name": "Kiro 사용자 인터뷰",
+      "description": "실제 Kiro 사용자들의 경험과 인사이트를 담은 인터뷰 시리즈입니다."
+    },
+    "en": {
+      "name": "Kiro User Interviews",
+      "description": "A series of interviews with real Kiro users sharing their experiences and insights."
+    },
+    "posts": [
+      "kiro-user-interview-001-20260526",
+      "kiro-user-interview-002-20260602"
+    ]
+  },
+  "portugal-2026": {
+    "ko": {
+      "name": "포르투갈 2026",
+      "description": "2026년 포르투갈에서의 생활과 경험을 담은 글 모음입니다."
+    },
+    "en": {
+      "name": "Portugal 2026",
+      "description": "A collection of stories from living and experiencing Portugal in 2026."
+    },
+    "posts": [
+      "parar-para-repensar-a-vida-20260301",
+      "crossfit-open-26-1-in-portugal-20260315",
+      "crossfit-open-26-2-in-portugal-20260316",
+      "crossfit-open-26-3-in-portugal-20260318",
+      "travel-incidents-episode-1-20260407",
+      "aws-ug-porto-meetup-20260416",
+      "aws-london-summit-2026-20260422"
+    ]
+  },
+  "crossfit": {
+    "ko": {
+      "name": "크로스핏",
+      "description": "크로스핏 관련 글 모음입니다."
+    },
+    "en": {
+      "name": "CrossFit",
+      "description": "A collection of CrossFit-related posts."
+    },
+    "posts": [
+      "crossfit-open-26-1-in-portugal-20260315",
+      "crossfit-open-26-2-in-portugal-20260316",
+      "crossfit-open-26-3-in-portugal-20260318"
+    ]
+  }
+}

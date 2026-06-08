@@ -2,6 +2,7 @@
   "nav": {
     "home": "Home",
     "blog": "Blog",
+    "collection": "Collections",
     "about": "About"
   },
   "common": {
@@ -28,5 +29,15 @@
     "subscribe": "Subscribe",
     "mainFeed": "Main Blog Feed",
     "tagFeed": "{tag} Tag Feed"
+  },
+  "collection": {
+    "title": "Collections",
+    "description": "A curated series of posts grouped by topic.",
+    "noCollection": "No collections yet.",
+    "episodes": "posts",
+    "episode": "post",
+    "latestPost": "Latest post",
+    "backToCollections": "Back to Collections",
+    "viewCollection": "View Collection"
   }
 }

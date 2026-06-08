@@ -99,3 +99,64 @@ export function getAllSlugs(locale: Locale): string[] {
 export function hasTranslation(slug: string, targetLocale: Locale): boolean {
   return getPostBySlug(slug, targetLocale) !== null;
 }
+
+// 컬렉션 관련 타입
+export interface CollectionMeta {
+  slug: string;
+  postCount: number;
+  latestDate: string;
+}
+
+// collections.json 타입
+type CollectionsData = {
+  [slug: string]: {
+    ko: { name: string; description: string };
+    en: { name: string; description: string };
+    posts: string[]; // 순서대로 나열된 slug 배열
+  };
+};
+
+const COLLECTIONS_FILE = path.join(process.cwd(), 'data/collections.json');
+
+function loadCollectionsData(): CollectionsData {
+  if (!fs.existsSync(COLLECTIONS_FILE)) return {};
+  return JSON.parse(fs.readFileSync(COLLECTIONS_FILE, 'utf-8')) as CollectionsData;
+}
+
+// 특정 컬렉션에 속한 포스트 가져오기 (collections.json 배열 순서 기준)
+export function getPostsByCollection(collectionSlug: string, locale: Locale): PostMeta[] {
+  const data = loadCollectionsData();
+  const collection = data[collectionSlug];
+  if (!collection) return [];
+
+  const allPosts = getAllPosts(locale);
+  const postMap = new Map(allPosts.map(p => [p.slug, p]));
+
+  return collection.posts
+    .map(slug => postMap.get(slug))
+    .filter((p): p is PostMeta => p !== undefined);
+}
+
+// 해당 locale의 모든 컬렉션 목록 가져오기
+export function getAllCollections(locale: Locale): CollectionMeta[] {
+  const data = loadCollectionsData();
+  const allPosts = getAllPosts(locale);
+  const postMap = new Map(allPosts.map(p => [p.slug, p]));
+
+  return Object.entries(data).map(([slug, collection]) => {
+    const posts = collection.posts
+      .map(s => postMap.get(s))
+      .filter((p): p is PostMeta => p !== undefined);
+
+    const latestDate = posts.length > 0
+      ? posts.reduce((a, b) => new Date(a.date) > new Date(b.date) ? a : b).date
+      : '';
+
+    return { slug, postCount: posts.length, latestDate };
+  }).filter(c => c.postCount > 0);
+}
+
+// 모든 컬렉션 slug 가져오기 (정적 경로 생성용)
+export function getAllCollectionSlugs(locale: Locale): string[] {
+  return getAllCollections(locale).map(c => c.slug);
+}

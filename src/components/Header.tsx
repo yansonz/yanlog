@@ -28,6 +28,12 @@ export default function Header({ locale }: HeaderProps) {
             {t(locale, 'nav.blog')}
           </Link>
           <Link 
+            href={`/${locale}/collection`} 
+            className="text-neutral-400 hover:text-neutral-50 transition-colors text-sm"
+          >
+            {t(locale, 'nav.collection')}
+          </Link>
+          <Link 
             href={`/${locale}/about`} 
             className="text-neutral-400 hover:text-neutral-50 transition-colors text-sm"
           >
