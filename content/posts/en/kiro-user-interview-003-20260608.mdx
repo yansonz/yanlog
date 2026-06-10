@@ -1,0 +1,156 @@
+---
+title: "Kiro User Interview #3 - Jae Hyun Shin from Woowa Bros"
+date: "2026-06-08"
+description: "How a TPM at Baemin raised operational quality with Kiro, building an engineering harness through steering and skills"
+tags: ["kiro", "interview", "community", "enterprise", "devops"]
+locale: "en"
+slug: "kiro-user-interview-003-20260608"
+draft: false
+---
+
+## Introduction
+
+For the third interview, I sat down with [Jae Hyun Shin](https://www.linkedin.com/in/재현-신-38051469/) from Woowa Bros (Baemin). He's an active AWS Community Hero, currently working as a TPM while also taking on an AI adoption support role on the side. He came to Woowa Bros after using Amazon Q Developer at his previous company Musinsa, and since joining, he's been focused on getting Kiro embedded into the organization. The conversation was full of practical thinking — using steering as the entry point for spreading Kiro across the team.
+
+---
+
+## Introduction
+
+**Q. Tell us about yourself and your current role.**
+
+I work as a TPM at Woowa Bros. That's my actual title, but since I started pushing AI adoption, I naturally picked up an AI support role on top of it. My teammates sometimes give me this look like I'm just making more work for everyone. I want to do good things, but I know it can feel like a burden to the people around me. That tension is always on my mind.
+
+Before this, I was at Musinsa where I used Amazon Q Developer. Woowa Bros was already using Kiro pretty heavily through a Q Developer wrapper license, so when I joined, it was a natural continuation.
+
+This year I also got the chance to present at the AWS Summit Seoul 2026 keynote. If you think about it from a developer career perspective, that stage is kind of a dream. When the opportunity came, I was genuinely thrilled. It was a Woowa Bros presentation, and being able to talk about our Kiro and AI adoption experience in front of that many people made it a really meaningful moment.
+
+<figure>
+
+![AWS Summit Seoul 2026 Keynote](https://images.yanbert.com/blog/images/kiro-user-interview-003-20260608/2026-06-09_12-25-05.webp)
+
+<figcaption>AWS Summit Seoul 2026 Keynote</figcaption>
+</figure>
+
+---
+
+## Why Kiro
+
+**Q. What led you to use Kiro as your team's tool?**
+
+The frustrating thing about Claude Code and Codex is that they're locked to a single vendor's models — Anthropic and OpenAI respectively. Kiro lets you pick from Claude, DeepSeek, Qwen, and others, so even if it's not the cheapest option, the flexibility and features make it appealing.
+
+More than that, Kiro was already widely used across Woowa Bros, so it made sense to align around it. You can use something like Claude Code personally, but if the team isn't on the same tool, things get murky. And the steering and skills features let you plant the best person's way of working into the whole organization. That only works when everyone's on the same tool.
+
+---
+
+## Steering: Raising Quality Without Training
+
+**Q. What was the first feature you focused on in Kiro?**
+
+Steering, without question. The very first thing I did after joining was get the steering docs in order. I went through the company's internal policies, guide docs, what to look at and where — all of it went into MD files and into the steering setup.
+
+**Q. What feels most essential about steering to you?**
+
+You can raise people's quality without training them. In games, when you learn a skill, you don't memorize how to use it or understand the mechanics — you just click it and it works. Same idea: set it up well and people can do the basics without knowing the underlying principles. That's the biggest thing.
+
+I've done a lot of internal training on infra and tooling, and people's motivation, experience, and understanding all vary so much. Putting things into steering and skills is just more effective than training every time. I think of it as **"harness engineering"** — instead of training each person, you embed the guide into the tool so everyone produces results above a certain floor.
+
+In practice, I defined the entire work process for FinOps research tasks in a steering file. Say "create research task" and it automatically creates a date-based directory, branches off, and initializes a README. Each analysis request gets a sequential call number (`01_`, `02_`) and all the result files, data, and scripts get saved in a consistent structure, with the request history automatically logged in `history.md`. Even if a session drops, you can pick right up where you left off.
+
+Team-wide standards get enforced through steering too — commit message format, how the team name is written in Wiki docs, file naming conventions. It doesn't matter who does the work, the same pattern comes out. Training people to be consistent takes time and still varies person to person. Steering just makes it happen.
+
+This paid off big in onboarding. A new hire on their first day was able to follow the exact same workflow and start research without any separate training. Because the steering already contains the structure and the rules, opening Kiro and saying "create research task" kicks off the whole thing to team standards automatically.
+
+<figure>
+
+![FinOps project standard steering file](https://images.yanbert.com/blog/images/kiro-user-interview-003-20260608/2026-06-08_22-34-46.webp)
+
+<figcaption>The FinOps project standard steering file in use</figcaption>
+</figure>
+
+---
+
+## Spec-Driven Development: Using It for Ops Work
+
+**Q. How do you use SDD?**
+
+When I was purely doing development, I only used SDD at the start of a new project or when building something with significant scope. Otherwise I'd skip it — it felt too routine.
+
+Now with TPM and ops work mixed in, I'm often in a position where I can't just dive into development myself. So I kick off with SDD, let it run, and check in while I'm doing other things. It's especially useful for research and building small tools. Things keep moving even when I'm not watching.
+
+---
+
+## IDE and CLI Together
+
+**Q. How do you split your time between IDE and CLI?**
+
+Both at the same time, going back and forth. IDE when I'm doing development, CLI for research, side tasks, and operational analysis.
+
+The biggest downside of the IDE is that you're limited to one session at a time. That's a real pain. So when work gets complex or involves large file processing, I switch to CLI for the multi-session support.
+
+---
+
+## Skills: Transferring the Best Person's Approach to the Whole Team
+
+**Q. How do you use the Skills feature?**
+
+My angle is "turn the way your best person works into a skill." For FinOps work, we had knowledge that only certain people held. Once that gets turned into a skill, the whole company can use it.
+
+It goes beyond development too. I analyzed the Slack message patterns of a colleague who's great at external communication, turned that into a skill, and now I reference their tone and style when writing announcements or work requests. And since TPM work involves project management and task allocation, I've built PM-style skills for those too. It's been a real reminder that skills are useful outside of code.
+
+Honestly, I've never formally learned project management from anyone. I figured out how to run multiple projects at the same time on my own, and there was always some underlying anxiety about it. Kiro skills helped fill that gap. Skills work as a way to transfer someone else's approach, but they're also a way to shore up your own weak spots. Those two things coexist.
+
+---
+
+## FinOps Perspective: Kiro's Cost Behavior
+
+**Q. How do you think about Kiro from a FinOps standpoint?**
+
+Say you're analyzing months of large-scale logs. Other AI tools, without clear instructions, will start reading files and then hit you with "this file is too large" while burning tokens doing nothing useful. Kiro doesn't do that. It writes code to handle the task and then runs the analysis, so you get fewer failures and more efficient token use.
+
+My read is that Kiro was built with "someone who doesn't really know what they're doing using it freely" as a baseline assumption. In my role, I'm constantly giving developers guidelines on using things as efficiently as possible from a FinOps perspective. So seeing Kiro analyze the task and take an effective approach rather than just charging ahead blindly — that builds trust.
+
+---
+
+## First Step for Teams Adopting Kiro
+
+**Q. What's the first step you'd recommend for a team just starting with Kiro?**
+
+Steering. Full stop.
+
+Here's the order: get your organization's knowledge into steering docs first, in whatever form. Then as you run things, turn the repeated actions into skills. When I joined Woowa Bros, steering was the first thing I put real time into — organizing company and team guides took a significant chunk of effort. Once that foundation is there, everything else clicks into place.
+
+---
+
+## What Jae Hyun Wants from the Kiro Team
+
+**Q. What would you most want to say to the Kiro team?**
+
+Honestly: catch up on features from the tools ahead of you, faster.
+(Editor's note: Taking skill.md as an example — Claude had it in October 2025, Kiro released the Agent Skills standard in March 2026.)
+
+The most urgent issue is the **IDE-CLI feature parity gap**. There's way too much that works in the IDE but not CLI, or vice versa. That's a problem for individual users, and it makes things really hard when I'm trying to train developers.
+
+Shipping new features every two weeks is great. The issue isn't pace — it's that things need to come out with the right priorities and enough polish. There are still too many bugs and missing pieces. Autonomous Agents went through a closed beta/preview phase, and the general availability timeline is still unclear.
+
+The IDE itself also lags behind tools like Cursor. Being able to use VS Code plugins is a plus, but there's a noticeable gap in AST analysis and code intelligence compared to purpose-built IDEs.
+
+---
+
+## What Operations Engineers Need in the AI Era
+
+**Q. What do you think is the most important quality for an ops engineer in the age of AI?**
+
+Curiosity.
+
+When you're trying to figure out how to fill a gap, you end up searching out of curiosity. SDD can't show data flow — so how did other industries handle that? That kind of curiosity, that drive to keep looking, matters a lot.
+
+I didn't have a formal background. I started without the fundamentals. But going through it with curiosity, building my own system, accumulating know-how — that eventually connected into systems thinking. No matter how good AI gets, figuring out "how should I use this?" is still a person's job.
+
+And one more thing: the ability to choose *not* to do something. In the AI era there's more information and more that's possible, and that creates the temptation to try to do all of it. Staying grounded amid the noise, judging what to do versus what to leave alone — that's actually the core of systems thinking.
+
+---
+
+## Closing
+
+What stuck with me talking to Jae Hyun was how he sees steering not as a config file, but as a way to embed organizational knowledge into the tool itself. The idea that changing the environment beats training people, and the practical way he moves between developer and ops work using Kiro — it left an impression.
