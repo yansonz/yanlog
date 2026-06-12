@@ -4,6 +4,19 @@ import { PostFrontmatter, Locale } from '@/types/post';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://yanlog.yanbert.com';
 const SITE_NAME = "YAN SO's Blog";
 
+// MDX 콘텐츠에서 첫 번째 이미지 URL 추출
+export function extractFirstImage(content: string): string | null {
+  // ![alt](url) 형식
+  const mdImageMatch = content.match(/!\[.*?\]\((https?:\/\/[^)]+)\)/);
+  if (mdImageMatch) return mdImageMatch[1];
+
+  // <img src="url" /> 형식
+  const htmlImageMatch = content.match(/<img[^>]+src=["'](https?:\/\/[^"']+)["']/);
+  if (htmlImageMatch) return htmlImageMatch[1];
+
+  return null;
+}
+
 interface GenerateMetadataOptions {
   title: string;
   description: string;
@@ -69,14 +82,15 @@ export function generatePageMetadata({
 
 export function generatePostMetadata(
   frontmatter: PostFrontmatter,
-  locale: Locale
+  locale: Locale,
+  image?: string
 ): Metadata {
   return generatePageMetadata({
     title: frontmatter.title,
     description: frontmatter.description,
     locale,
     path: `/${locale}/blog/${frontmatter.slug}`,
-    image: frontmatter.image,
+    image: image ?? frontmatter.image,
     type: 'article',
     publishedTime: frontmatter.date,
     tags: frontmatter.tags,

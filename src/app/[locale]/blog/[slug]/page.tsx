@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { getPostBySlug, getAllSlugs, hasTranslation } from '@/lib/mdx';
-import { generatePostMetadata } from '@/lib/metadata';
+import { generatePostMetadata, extractFirstImage } from '@/lib/metadata';
 import { extractHeadings } from '@/lib/toc';
 import { Locale } from '@/types/post';
 import Link from 'next/link';
@@ -23,7 +23,10 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
     return { title: 'Post Not Found' };
   }
   
-  return generatePostMetadata(post.frontmatter, locale);
+  // frontmatter image → 본문 첫 번째 이미지 → 기본 og-image 순으로 적용
+  const image = post.frontmatter.image || extractFirstImage(post.content) || undefined;
+
+  return generatePostMetadata(post.frontmatter, locale, image);
 }
 
 export function generateStaticParams() {
