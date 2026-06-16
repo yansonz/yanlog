@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { getAllPosts } from '@/lib/mdx';
+import { getAllPosts, getAllCollectionSlugs } from '@/lib/mdx';
 import { Locale } from '@/types/post';
 
 export const dynamic = 'force-static';
@@ -35,6 +35,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
         lastModified: new Date(post.date),
         changeFrequency: 'monthly',
         priority: 0.6,
+      });
+    }
+
+    // 컬렉션 목록 페이지
+    routes.push({
+      url: `${BASE_URL}/${locale}/collection`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    });
+
+    // 각 컬렉션 상세 페이지
+    const collectionSlugs = getAllCollectionSlugs(locale);
+    for (const slug of collectionSlugs) {
+      routes.push({
+        url: `${BASE_URL}/${locale}/collection/${slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.65,
       });
     }
   }

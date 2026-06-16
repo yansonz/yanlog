@@ -1,7 +1,9 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
 import { getAllCollections } from '@/lib/mdx';
 import { Locale } from '@/types/post';
 import { getTranslations } from '@/lib/i18n';
+import { generatePageMetadata } from '@/lib/metadata';
 import collectionsData from '../../../../data/collections.json';
 
 interface CollectionPageProps {
@@ -10,6 +12,21 @@ interface CollectionPageProps {
 
 export function generateStaticParams() {
   return [{ locale: 'ko' }, { locale: 'en' }];
+}
+
+export async function generateMetadata({ params }: CollectionPageProps): Promise<Metadata> {
+  const { locale: localeParam } = await params;
+  const locale = (localeParam === 'ko' || localeParam === 'en' ? localeParam : 'ko') as Locale;
+
+  return generatePageMetadata({
+    title: locale === 'ko' ? '컬렉션' : 'Collections',
+    description:
+      locale === 'ko'
+        ? '주요 글을 시리즈로 모아 볼 수 있는 공간입니다.'
+        : 'A curated series of posts grouped by topic.',
+    locale,
+    path: `/${locale}/collection`,
+  });
 }
 
 type CollectionsData = {

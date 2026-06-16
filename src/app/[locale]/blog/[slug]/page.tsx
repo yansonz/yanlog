@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import { getPostBySlug, getAllSlugs, hasTranslation } from '@/lib/mdx';
-import { generatePostMetadata, extractFirstImage } from '@/lib/metadata';
+import { generatePostMetadata, extractFirstImage, generateBlogPostingJsonLd, generatePostBreadcrumbJsonLd } from '@/lib/metadata';
 import { extractHeadings } from '@/lib/toc';
 import { Locale } from '@/types/post';
 import Link from 'next/link';
@@ -55,9 +55,23 @@ export default async function PostPage({ params }: PostPageProps) {
   const otherLocale: Locale = locale === 'ko' ? 'en' : 'ko';
   const hasOtherLocale = hasTranslation(slug, otherLocale);
   const tocItems = extractHeadings(post.content);
+
+  // JSON-LD: BlogPosting + BreadcrumbList
+  const image = post.frontmatter.image || extractFirstImage(post.content) || undefined;
+  const blogPostingJsonLd = generateBlogPostingJsonLd(post.frontmatter, locale, image);
+  const breadcrumbJsonLd = generatePostBreadcrumbJsonLd(post.frontmatter.title, slug, locale);
   
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="flex gap-16 justify-center">
         {/* 메인 콘텐츠 */}
         <article className="max-w-2xl w-full">

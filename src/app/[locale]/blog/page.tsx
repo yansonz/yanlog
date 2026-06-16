@@ -1,7 +1,9 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
 import { getAllPosts } from '@/lib/mdx';
 import { Locale, PostMeta } from '@/types/post';
 import { getTranslations } from '@/lib/i18n';
+import { generatePageMetadata } from '@/lib/metadata';
 import RSSLink from '@/components/RSSLink';
 
 interface BlogPageProps {
@@ -10,6 +12,21 @@ interface BlogPageProps {
 
 export function generateStaticParams() {
   return [{ locale: 'ko' }, { locale: 'en' }];
+}
+
+export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
+  const { locale: localeParam } = await params;
+  const locale = (localeParam === 'ko' || localeParam === 'en' ? localeParam : 'ko') as Locale;
+
+  return generatePageMetadata({
+    title: locale === 'ko' ? '블로그' : 'Blog',
+    description:
+      locale === 'ko'
+        ? '기술 관련 글과 좋아하는 활동을 아카이빙하기 위한 공간입니다.'
+        : 'A space for archiving technical articles and favorite activities.',
+    locale,
+    path: `/${locale}/blog`,
+  });
 }
 
 function PostItem({ post, locale }: { post: PostMeta; locale: Locale }) {

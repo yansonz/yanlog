@@ -1,7 +1,9 @@
 import Link from 'next/link';
+import { Metadata } from 'next';
 import { getAllCollectionSlugs, getPostsByCollection } from '@/lib/mdx';
 import { Locale, PostMeta } from '@/types/post';
 import { getTranslations } from '@/lib/i18n';
+import { generatePageMetadata, generateCollectionJsonLd } from '@/lib/metadata';
 import collectionsData from '../../../../../data/collections.json';
 
 interface CollectionDetailPageProps {
@@ -27,6 +29,22 @@ export function generateStaticParams() {
   }
 
   return params;
+}
+
+export async function generateMetadata({ params }: CollectionDetailPageProps): Promise<Metadata> {
+  const { locale: localeParam, slug } = await params;
+  const locale = (localeParam === 'ko' || localeParam === 'en' ? localeParam : 'ko') as Locale;
+  const data = collectionsData as CollectionsData;
+  const meta = data[slug]?.[locale];
+  const name = meta?.name ?? slug;
+  const description = meta?.description ?? '';
+
+  return generatePageMetadata({
+    title: name,
+    description,
+    locale,
+    path: `/${locale}/collection/${slug}`,
+  });
 }
 
 function PostItem({ post, locale, order }: { post: PostMeta; locale: Locale; order: number }) {
@@ -66,8 +84,26 @@ export default async function CollectionDetailPage({ params }: CollectionDetailP
   const collectionName = meta?.name ?? slug;
   const collectionDescription = meta?.description ?? '';
 
+  // JSON-LD: ItemList + BreadcrumbList
+  const { itemList, breadcrumb } = generateCollectionJsonLd(
+    slug,
+    collectionName,
+    collectionDescription,
+    posts.map(p => ({ slug: p.slug, title: p.title })),
+    locale
+  );
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
+      {/* JSON-LD */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
       <header className="mb-12">
         <div className="mb-4">
           <Link
