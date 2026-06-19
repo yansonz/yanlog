@@ -1,0 +1,158 @@
+---
+title: "Kiro User Interview #4 - Min Tae Kim from Woowa Bros"
+date: "2026-06-16"
+description: "How a backend engineer at Baemin restructured a legacy system with AI-DLC and built a full AI collaboration workflow through agent skills"
+tags: ["kiro", "interview", "community", "backend", "enterprise"]
+locale: "en"
+slug: "kiro-user-interview-004-20260616"
+draft: false
+---
+
+## Introduction
+
+For the fourth interview, I sat down with [Min Tae Kim](https://www.linkedin.com/in/mintae-kim-14km/) from Woowa Bros (Baemin). He's a backend server engineer focused on improving customer experience in the commerce space, and an organizer of the [AWS Korea User Group - Architecture Group](https://github.com/awskrug/architecture-group). He introduced AI-DLC (AI-Driven Development Life Cycle) at the AWS Summit Seoul 2026 keynote, and has been spreading Kiro knowledge and know-how internally to lead AI adoption on his team. What drew me to this conversation was his perspective on using AI as a collaboration partner grounded in Computer Science fundamentals — without getting swept along by the tool.
+
+<figure>
+
+![Min Tae Kim at the AWS Summit Seoul 2026 Keynote](https://images.yanbert.com/yanlog/images/kiro-user-interview-004-20260616/2026-06-17_13-35-02.webp)
+
+<figcaption>Min Tae Kim at the AWS Summit Seoul 2026 Keynote</figcaption>
+
+</figure>
+
+---
+
+## Introduction
+
+**Q. Tell us about yourself and your current role.**
+
+I do backend server development at Woowa Bros. Right now I'm mostly working on improving customer experience in the commerce space — things like reducing order cancellation rates and improving delivery quality. I'm a server engineer handling that kind of work.
+
+I'm also an organizer for the AWS Architecture Group. It's a community where we talk through and review all kinds of AWS architectures together. Everyone's welcome, including beginners — though I know architecture can feel intimidating for people just starting out, which makes running the group something I think about a lot.
+
+---
+
+## Why Kiro
+
+**Q. What led to adopting Kiro at your organization?**
+
+Going back to last year, there were three AI tools we evaluated for purchase: Kiro, Cursor, and JetBrains Junie. Since our company uses Java heavily, Cursor was a poor fit — it's VS Code-based and not ideal for Java engineering. Junie was IntelliJ-based, which gave us high hopes, but at the time it was still an early version and the functionality just wasn't polished enough to work with.
+
+Kiro can run via CLI, supports multiple model providers including Anthropic, and since we're a heavy AWS shop, it was a natural fit. I took on the role of champion for spreading it internally, which gave me firsthand exposure to both the strengths and the gaps.
+
+Currently we use two tools as our company standard. It varies by person — generally, Kiro and Claude are used in parallel for coding, and Claude handles documentation and developer communication. We use Claude Code Skills to pass along context and explanations, and it's convenient since a lot of non-engineering folks are already on Claude Code too.
+
+---
+
+## AI-DLC: AI-Driven Development Life Cycle
+
+**Q. You introduced AI-DLC at the AWS Summit Seoul 2026 keynote — how did that framework take shape for you?**
+
+When I was working with 10–12 backend engineers in a feature org, I spent a lot of time thinking about how to get AI working effectively to raise the whole team's productivity.
+
+Even before the concept of an "LLM wiki" existed, I was already saving know-how into docs and sharing them with the team. The cycle was: categorize requirements and design phases, identify what we're struggling with, ask AI those questions, interpret the results, and share them back out. That process naturally aligned with how Kiro's spec-writing works, and it evolved into what I now call AI-DLC.
+
+I use Kiro's Requirement, Design, Task structure as-is, with a clearer distinction between the Inception phase and the Construction phase.
+
+**Q. How do you collaborate with Kiro during requirements analysis?**
+
+We've been heavy users of ADR (Architecture Decision Record). Our historical decisions and future direction are always captured there. The workflow is to share those with the team, interpret them together, and align on next steps. We've also connected Confluence via MCP so anyone can access it.
+
+---
+
+## Migrating a Legacy Batch System
+
+**Q. How did you use Kiro for a legacy batch system migration?**
+
+It was a migration of source code that was five years old, and there were hundreds of files to get through. Sub-agents didn't exist yet at the time, so I opened multiple sessions and analyzed the source file by file.
+
+The approach was: build the list first, have AI infer the relevant domains, then classify them into domains to remove and domains to migrate. Unused tables got classified too, and I analyzed the whole system by expanding from internal to external table relationships. Dozens of files got dropped in, and anything critical got double-verified.
+
+The result: work that would have taken two months, done solo in under a month. Going through that, I had a moment of "engineers could really get replaced" — but then hallucinations and deep architectural design work reminded me that the human touch is still very much needed. Fitting the entire system domain into context is genuinely hard.
+
+---
+
+## Spec First, Code Second
+
+**Q. What changed most from your old development approach during the Construction phase?**
+
+Honestly, our company already had a culture of writing code spikes or design docs first and running team reviews before moving forward. So the change didn't feel that dramatic.
+
+What did change is that it feels like there's always a collaboration partner by my side now. We've trained it on the things to watch out for, so it catches the things we'd miss — like a pair programming partner. We haven't rolled it out org-wide, but at least among the people I work closely with, we've been sharing docs and know-how as we go.
+
+---
+
+## Agent Skills: Turning Repetition into Assets
+
+**Q. How do you go about building agent skills?**
+
+It's a process of continuously evaluating and refining problems found during development into skills. I use the Skill Creator skill — I feed in cases where things went wrong and keep evaluating and improving. Eventually, with enough multi-turn cycles, the context will get messy and contaminated, but so far this cycle has kept things moving forward.
+
+Skills are managed as team resources. Internally we have a skill hub that manages all skills, and I register and share them there.
+
+**Q. Can you share a specific agent or skill you've built?**
+
+Lately I've been using a TPM agent. I built it to fill in while my team lead was on vacation — it reviews my work. It's been genuinely useful so I'm planning to share it as a skill with the team.
+
+<figure>
+
+![TPM Skill example in use](https://images.yanbert.com/yanlog/images/kiro-user-interview-004-20260616/tpmskill.webp)
+<figcaption>TPM Skill example in use</figcaption>
+
+</figure>
+
+I've also built a senior engineer agent. I define it as: "You're a senior engineer, you need to follow N clean code principles" — and built an index file inside the agent so it can read things flexibly. The goal is to reduce context branching when a session starts.
+
+Developers today need to look beyond code — architecture matters, communication matters. Decisions move faster and are more data-driven, which means more channels to monitor, more docs to read, more meetings to sit in. My direction with agent design right now is to cut down that time and create more space to focus on architecture.
+
+---
+
+## Choosing Tools: Avoiding Vendor Lock-in
+
+**Q. What's your most important criteria when selecting an AI tool?**
+
+There's no silver bullet that solves everything. Claude Code has had a great influence as a model provider, but better AI models and tools will keep coming and things will shift.
+
+We've already seen GPT-5.5 get a lot of traction, then Opus 4.8 drops and the momentum shifts again, and new models just keep coming. Getting locked into a specific provider makes system migration a nightmare. So I prefer a direction that minimizes dependency on third-party tools while still getting the results I need.
+
+---
+
+## What Min Tae Wants from the Kiro Team
+
+**Q. What would you most want to say to the Kiro team?**
+
+The CLI UX is my biggest frustration. It just doesn't feel user-friendly. For example, ESC didn't cancel operations in the past. Ctrl+C would just close the session entirely, which caught me off guard more than once. It might seem like a small thing, but I'd love to see the usability become more intuitive than it is today.
+
+Beyond that, having a direction that's one step ahead matters more than update cadence. Trends shift fast as model performance improves. Being ready for the context engineering, vibe coding, harness and loop engineering wave — that preparation needs to happen faster.
+
+Looking at the visible AWS product roadmap, the focus seems more on launching specialized agents like Bedrock-based DevOps Agent and Security Agent than on Kiro itself. From a Kiro user's perspective, that honestly feels a bit like being left out in the cold.
+
+---
+
+## Shifting R&R at Woowa Bros
+
+**Q. How do you see the blurring of role boundaries inside organizations in the AI era?**
+
+If you're willing, you can now touch code in areas outside your specialty. In my case, even as a backend engineer, I've found myself digging into data engineering a lot more.
+
+As backend engineers increasingly build features driven by data, questions like "why is this data showing up this way?" and "what data should my code be based on to solve this better?" come up naturally. It's an effort to understand the upstream planning and overall flow more deeply.
+
+I think backend engineers actually have an advantage in infrastructure and architecture design over pure codebase work. I'm expanding in that direction — building agents that capture what's unique to our domain and making life as a backend engineer richer. Engineers who can't adapt that way are going to have a harder and harder time.
+
+---
+
+## What Developers Need in the AI Era
+
+**Q. What do you think is the most important skill for a developer in the age of AI?**
+
+The ability to dig all the way to the bottom of a problem.
+
+Even when AI generates the code, if you don't understand the fundamental principles of how the system operates, you become the engineer most easily replaced. You're collaborating with AI, not depending on it. What the older generation of engineers always said — "CS fundamentals matter most" — still holds true in the AI era. Frameworks change, code changes, but topics and domains don't.
+
+The role that's uniquely human is understanding a company's and product's distinct characteristics quickly, interpreting the data, and embedding that into software. AI can't fully replace the understanding of user behavior patterns. The ability to see the world clearly, read it with wisdom, and make fast, well-grounded decisions — that's what will matter more and more.
+
+---
+
+## Closing
+
+What stood out talking to Min Tae was his attitude of "use AI actively, but don't get swept along by it." Holding on to what shouldn't be lost without being shaken by trends, turning repetition into assets, embedding agents into real work — that's how Min Tae works as a developer in the AI era.
