@@ -160,9 +160,26 @@ specs/
 
 You can read project status just from the file system, and in the IDE the in-progress items naturally float to the top of the listing. Simple but effective.
 
+### Development Timeline
+
+| # | Feature | Period | What it is |
+|---|---------|--------|------------|
+| 1 | MVP (z_mvp) | 6/14~6/15 | Face search, upload, event management |
+| 2 | Short URL (z_short-url) | 6/16 | `/e/[shareLink]` routing |
+| 3 | Pro Plan (z_pro-plan) | 6/24 | Storage limits, admin API |
+| 4 | Video Support (z_video-support) | 6/24 | Lambda keyframe extraction, video search |
+| 5 | Expiration Countdown | 6/25 | D-day countdown UI |
+| 6 | Event Archival | 6/26 | Auto-delete pipeline |
+| 7 | Mosaic Policy | 6/27 | Blur other people's faces |
+| 8 | i18n | 6/29 | ko/en/ja support |
+
+All 8 features went through the requirements, design, tasks flow. Each one lives in its own spec directory, so when I want to go back and ask "what were the requirements for video support again?" I can find it instantly. The agents can look it up too.
+
 ---
 
-## QA Automation (Agents)
+## Complete Delegation (Agents)
+
+### qa1-api Agent
 
 I set up agents to run QA automatically with every code change. Even if you define a minimal MVP feature ("upload photos, search by face"), you inevitably add things and the internal implementation gets messier than expected. When that happens:
 
@@ -170,8 +187,6 @@ I set up agents to run QA automatically with every code change. Even if you defi
 2. Did the new code break something that was working before?
 
 You need to test this repeatedly. So I set up test cases to run on every change: static analysis (tsc), unit/integration tests (vitest), and API smoke tests.
-
-### qa1-api Agent
 
 ```json
 {
@@ -201,9 +216,7 @@ The workflow:
 
 Before any push, I wanted to validate against real user scenarios, so I defined a `qa2-playwright` (E2E test) agent and tied it to a git pre-push hook. Nothing gets pushed without all tests passing. In practice, problems still slip through, but at least **"no merging to main without tests"** is guaranteed by the system. And you can keep strengthening test cases over time to raise coverage and lower the failure rate. Having that safety net gave me a lot more confidence to use `/goal` aggressively in the second half of the project.
 
----
-
-## Debugging with Kiro (/goal)
+### Debugging with Kiro (/goal)
 
 The hardest (and most impressive) debugging experience in the whole project was tracking down an indexing outage. The SQS worker was hanging intermittently. I banged my head against it for hours, then handed it off to Kiro via the `/goal` command. Kiro built a systematic set of hypotheses, ran through them, and solved it.
 
@@ -221,23 +234,6 @@ But what really impressed me was what happened *during* the debugging process. K
 ```
 
 That addition becomes a safeguard against repeating the same mistake. The next time Kiro tries to write similar code, it checks the steering file and pushes back.
-
----
-
-## Development Timeline
-
-| # | Feature | Period | What it is |
-|---|---------|--------|------------|
-| 1 | MVP (z_mvp) | 6/14~6/15 | Face search, upload, event management |
-| 2 | Short URL (z_short-url) | 6/16 | `/e/[shareLink]` routing |
-| 3 | Pro Plan (z_pro-plan) | 6/24 | Storage limits, admin API |
-| 4 | Video Support (z_video-support) | 6/24 | Lambda keyframe extraction, video search |
-| 5 | Expiration Countdown | 6/25 | D-day countdown UI |
-| 6 | Event Archival | 6/26 | Auto-delete pipeline |
-| 7 | Mosaic Policy | 6/27 | Blur other people's faces |
-| 8 | i18n | 6/29 | ko/en/ja support |
-
-All 8 features went through the requirements, design, tasks flow. Each one lives in its own spec directory, so when I want to go back and ask "what were the requirements for video support again?" I can find it instantly. The agents can look it up too.
 
 ---
 
