@@ -1,0 +1,257 @@
+---
+title: "Kiro 워크플로우로 얼굴인식 사진검색 앱 MVP를 런칭한 이야기"
+date: "2026-06-30"
+description: "Steering Files, Spec-driven Development, Agent QA까지 - Kiro의 구조적 워크플로우를 활용해 iwasthere.pics 홀로 MVP를 만든 과정"
+tags: ["kiro", "aws", "iwasthere", "nextjs", "face-recognition", "spec-driven-development"]
+locale: "ko"
+slug: "how-i-built-iwasthere-mvp-with-kiro-workflow-20260630"
+draft: false
+---
+
+나는 개발자가 아니다. 인프라 운영도 주 영역이 아니다. 이 프로젝트에서 내 역할은 문제 정의, 아키텍처 결정, 품질 기준 설정이었다. 코드 구현은 Kiro가 했고, 내가 한 일은 "무엇을 만들지"와 "어떤 수준이어야 하는지"를 결정하는 것이었다. 약 10일간 작업 끝에 목표했던 MVP를 프로덕션에 올린 과정을 Kiro 워크플로우 경험 위주로 정리했다.
+
+---
+
+## 프로젝트 개요
+
+### 서비스 소개
+행사에서 사진을 수십, 수백 장을 찍거나 찍힌다. 며칠 뒤 공유된 앨범에서 모두와 함께 단체 사진, 오랜만에 친구와 함께, 우연히 찍힌 인생샷 같은 내가 있는 사진을 기대하며 "내 사진 어디있지?" 하고 수백 장을 스크롤한다. 정작 내 사진은 못 찾고 포기하거나, 앨범이 공유된 것조차 모르고 지나치는 경우가 많다. 나는 주로 크로스핏 박스, 개발자 행사, AWS 사용자 커뮤니티 같은 사람이 모이는 곳에서 활동을 하다보니 이런 문제를 늘 생각하고 있었고 언젠가 개선해보고 싶었다.
+
+**iwasthere**는 이 문제를 풀기 위해 만든 서비스다. 이벤트 주최자는 사람별 사진을 분류해서 보내줄 필요 없고 한번에 사진을 올린다. 이벤트 참여자는 공유된 앨범에서 얼굴 인식으로 내 사진을 5초 만에 찾아주는게 주요 기능이다.
+
+<figure>
+
+![내 얼굴로 내 사진만 찾기](https://images.yanbert.com/blog/images/how-i-built-iwasthere-with-kiro-workflow-20260630/iwt-ko.webp)
+<figcaption>내 얼굴로 내 사진만 찾기</figcaption>
+
+</figure>
+
+### 프로젝트 정보
+- **서비스**: [iwasthere.pics](https://iwasthere.pics)
+- **기술 스택**: Next.js 16 + React 19, Tailwind + shadcn/ui, Drizzle ORM + Aurora PostgreSQL(pgvector), InsightFace(Python), AWS ECS Fargate/ALB/S3/SQS/CloudFront/SES/Lambda/CodeDeploy
+- **기간**: 약 15일 (2026년 6월)
+- **개발자**: 1명 + Kiro
+
+### Kiro 관련 디렉토리
+```markdown
+.kiro/
+├── steering/          # 프로젝트 규칙 (항상 참조)
+│   ├── project.md         # 기술 스택, 코드 규칙, 보안, "하지 말 것"
+│   ├── design-system.md   # 컬러 토큰, 타이포, 컴포넌트 규격
+│   ├── verification.md    # QA 자동화 규칙, 테스트 의무
+│   └── progress.md        # 현재 진행 상태 (세션 간 컨텍스트 유지)
+├── specs/             # 기능별 스펙 (requirements -> design -> tasks)
+│   ├── i18n/
+│   ├── mosaic-policy/
+│   ├── event-archival/
+│   ├── z_mvp/         # z_ prefix = 완료 아카이브, 리스트 상 하위에 두려고 사용
+│   ├── z_video-support/
+│   └── ...
+└── agents/            # QA 자동화 에이전트
+    ├── qa1-api.json
+    └── qa2-playwright.json
+```
+
+---
+
+## 프로젝트 규칙 (Steering)
+
+### 핵심 내용
+`steering/project.md`는 이 프로젝트의 공통 규칙 같은 것이다. 모든 세션에서 Kiro가 참조하며, 작성되는 코드는 이 규칙을 따른다. 물론 실패할 때도 있는데 그런 경우 작성된 내용이 모호하거나 다른 내용과 충돌하는 모호한 상황이어서 더 정확하고 명시적으로 수정할 필요가 있다.
+
+```markdown
+## MVP 기술 스택
+- Frontend: Next.js 16 (App Router) + TypeScript strict
+- Hosting: Amazon ECS Fargate + ALB (CodeDeploy Blue/Green 배포, GitHub Actions CI/CD)
+- DB: Amazon Aurora Serverless v2 (PostgreSQL + pgvector) + Drizzle ORM
+- Auth: 자체 Email OTP (SES 발송 + DB 저장 + bcrypt 검증) + 세션 쿠키
+- Email: Amazon SES v2 (OTP 발송, 업그레이드 안내 등)
+- Face Engine: InsightFace on Amazon ECS Fargate (Python FastAPI)
+- Video Processing: Lambda (Docker, keyframe-extractor) - S3 videos/ 업로드 트리거 -> ffmpeg 키프레임 추출
+- Queue: Amazon SQS (비동기 인덱싱)
+
+## 하지 말 것
+- 오버 엔지니어링 금지. MVP에 충실.
+```
+
+초기 작성 이후 작업 중간에 추가한 중요 내용은 **비동기/I-O 기술 선택 원칙**이다:
+
+```markdown
+## 비동기/I-O 기술 선택 원칙 (필수)
+- asyncio 환경에서 I/O는 네이티브 async 라이브러리 사용 (DB: asyncpg, HTTP: httpx)
+- 동기 라이브러리를 run_in_executor로 감싸는 패턴 금지
+- 타임아웃은 "실제로 끊기는지" 검증 필수
+```
+
+이 규칙은 실제 구현 및 테스트를 해보며 성능 개선을 위해 추가했다. **개선점이 다음 원칙이 되는 것**이 Kiro 워크플로우의 핵심이라고 생각한다.
+
+### 세션 간 컨텍스트 유실 방지
+
+AI 코딩 에이전트의 가장 큰 약점 중 하나는 **세션이 바뀌면 컨텍스트를 잊는다**는 것이다. 작업환경을 [CMUX](https://cmux.com)에서 여러 워크스페이스(좌측 패널에 탭으로 구분)에 각각 Kiro CLI를 띄우고 사용한다. 한 워크스페이스에서는 코딩을 하면서 다른 워크스페이스에서는 인프라 작업, 보안 점검 같은 다른 컨텍스트의 작업을 분리해서 하더라도 워크스페이스 간 컨텍스트가 개별 세션내에서 관리되었다. 방법을 찾다가 개별 워크스페이스의 에이전트들이 progress.md에 대략적인 작업내용을 업데이트하면서 진행하고 참조하도록 간단히 해결한다.
+
+```markdown
+# iwasthere — 현재 진행 상태
+
+## 배포 환경
+- URL: https://iwasthere.pics
+- AWS 계정: (***)
+- 리전: (***)
+- ECS 클러스터: iwasthere (nextjs + face-engine 서비스)
+- CI/CD: GitHub Actions → ECR → ECS rolling update
+
+## 완료된 작업
+- ✅ CDK로 전체 인프라 배포 (VPC, Aurora, S3, CloudFront, SQS, Cognito, ECS)
+- ✅ 인덱싱 hang/실패 최종 해결 (2026-06-22)
+- ✅ 동영상 지원 구현 (2026-06-24)
+- ✅ 도메인 마이그레이션 (2026-06-26)
+- ✅ 다국어(i18n) 지원 — ko/en/ja (2026-06-29)
+...
+```
+
+새로운 세션을 열어도 Kiro는 "지금 뭐가 되어있고, 뭐가 남았는지"를 즉시 파악하고 기존 컨텍스트를 유지한 채로 작업을 이어갈 수 있었다. 다만 매번 스티어링 파일이 컨텍스트에 로드되어 불필요하게 토큰이 사용되는데, 이후 효율 관점에서 운용 방식의 고도화가 필요하다.
+
+---
+
+## 스펙모드 (Spec-driven Development)
+
+Kiro에서 Spec 모드를 통해 아래 3가지 문서를 작성 및 관리할 수 있다. 기능 하나를 만들 때의 흐름에 따라 요구사항을 정의하고, 설계를 하고, 실제 구현을 위한 작업 계획을 세운다.
+
+```markdown
+1. requirements.md  ->  "무엇을 만들 것인가" (유저 스토리 + 수락 기준)
+2. design.md        ->  "어떻게 만들 것인가" (아키텍처, API, 데이터 모델)
+3. tasks.md         ->  "어떤 순서로 만들 것인가" (체크박스 리스트)
+```
+
+### 실제 예시: i18n 기능
+요구사항 문서는 EARS(Easy Approach to Requirements Syntax) 패턴으로 작성하기 때문에 다소 어색해 보일 수 있으나, 사람과 AI 에이전트 모두에게 모호함을 없애고 명확한 요구사항을 확정 지을 수 있었다.
+
+`requirements.md`에서 유저 스토리를 정의한다:
+
+```markdown
+### Requirement 1: next-intl 인프라 및 URL prefix 라우팅
+
+**User Story:** As a 참여자 또는 업로더, I want 브라우저 언어에 맞는 UI를
+자동으로 볼 수 있어야 한다, so that 별도 설정 없이 편하게 서비스를 이용할 수 있다.
+
+#### Acceptance Criteria
+1. THE System SHALL next-intl 라이브러리를 사용하여 i18n을 구현해야 한다.
+2. THE System SHALL URL prefix 방식으로 locale을 결정해야 한다.
+3. WHEN ko locale일 때, THE System SHALL URL prefix를 생략할 수 있어야 한다.
+```
+
+이 포맷 덕분에 Kiro가 **정확히 무엇을 구현해야 하는지** 안다. "대충 i18n 추가해줘"가 아니라, 수락 기준이 명확하기 때문에 구현 후 검증도 자동으로 가능하다.
+
+### 완료스펙 아카이빙
+
+완료된 스펙은 폴더명에 `z_` prefix를 붙인다:
+
+```markdown
+specs/
+├── i18n/              ← 진행 중
+├── mosaic-policy/     ← 진행 중
+├── z_mvp/             ← 완료
+├── z_video-support/   ← 완료
+├── z_pro-plan/        ← 완료
+└── z_short-url/       ← 완료
+```
+
+파일 시스템만으로 프로젝트 진행 상태를 확인할 수 있고 IDE에서 확인 시 진행 중 및 잔여 작업이 리스팅 상위에 보이는 게 편해서 이렇게 관리했다.
+
+---
+
+## QA 자동화 (Agents)
+
+코드를 변경할 때마다 자동으로 QA를 실행하는 에이전트를 설정했다. MVP를 위해 "사진을 업로드하고, 얼굴로 검색한다" 라는 최소한의 기능을 정의하더라도 작업을 하다보면 기능이 더해지기도 하고 예상보다 내부 구현이 복잡해지는 경우가 있다. 이런 경우
+
+1) 추가된 코드가 의도대로 구현이 되서 동작을 하는지?
+2) 추가된 코드로 인해 기존에 잘 돌아가던 코드에 문제가 생기지 않았는지?
+
+반복적으로 테스트가 필요하다. 그래서 매 코드 변경마다 정적분석(tsc), 유닛/통합테스트(vitest), API smoke test의 테스트케이스를 수행하도록 했다.
+
+### qa1-api 에이전트
+
+```json
+{
+  "name": "qa1-api",
+  "description": "API 레벨 QA 에이전트 — tsc + vitest + API smoke test",
+  "prompt": "당신은 QA 전문가입니다. ...",
+  "toolsSettings": {
+    "shell": {
+      "allowedCommands": [
+        "npx tsc.*",
+        "npm run (test|lint|build).*",
+        "curl -s http://localhost:3000.*"
+      ]
+    }
+  }
+}
+```
+
+워크플로우:
+1. 코드 변경 완료
+2. Kiro가 자동으로 qa1-api 서브에이전트 실행
+3. `tsc -> lint -> vitest` 순서로 검증
+4. FAIL이면 에러 분석 + 수정 제안 -> 수정 후 재실행
+5. PASS면 커밋 가능
+
+### qa2-playwright 에이전트
+
+push 전에는 최대한 사용자 시나리오에서 검증 하도록 `qa2-playwright`(E2E 테스트) 에이전트를 정의하고, git pre-push hook을 걸어서 모든 테스트가 통과해야 push가 가능하도록 강제했다. 이렇게 해도 실제 테스트를 해보면 문제가 나오지만 적어도 **"테스트 없이 메인브랜치에 반영 하지 않는다"**가 시스템으로 보장되고 테스트 케이스를 보강하며 테스트 커버리지를 높이고 실패율을 낮출 수 있는 구조가 마련되었다. 이런 안전장치를 바탕으로 프로젝트 후반에는 /goal 커맨드를 조금 더 자신 있게 적극적으로 활용할 수 있는 계기가 되었다. 
+
+---
+
+## 디버깅도 Kiro와 함께 (/goal)
+
+프로젝트 중 가장 힘든 디버깅이자 인상적이었던 경험은 사진 인덱싱 장애 해결 과정이었다. SQS 워커가 간헐적으로 멈추는 문제를 수시간 삽질하다가 결국 Kiro `/goal` 커맨드로 에이전트에게 위임했고, Kiro가 스스로 체계적인 가설을 세우고 검증을 거쳐 해결했다. 근본 원인은 허무하게도, 디버깅 중 내가 `run-task`로 직접 띄운 임시 태스크 2개를 종료하지 않고 방치한 것이었다. 이 좀비 태스크들이 구버전 코드로 SQS 메시지를 경쟁 소비하면서 간헐적 인덱싱 실패를 만들었다.
+
+하지만 해결 과정 중 발견한 **여러 레슨런을 steering 규칙으로 설계에 반영**까지 하는 과정은 놀라움의 연속이었다:
+
+```markdown
+### 비동기/I-O 기술 선택 원칙 — 인덱싱 장애 회고 반영
+> 2026-06-21 추가
+
+- asyncio 환경에서 I/O는 네이티브 async 라이브러리 사용
+- 동기 라이브러리를 run_in_executor로 감싸는 패턴 금지
+- 핵심 경로는 동시 N건 부하 테스트를 배포 전 수행
+```
+
+보강된 내용은 이후 같은 실수를 반복하지 않기 위한 장치가 되고, 다음에 비슷한 패턴의 코드를 작성하려 하면 Kiro가 steering을 참조해서 거부한다.
+
+---
+
+## 개발 타임라인
+
+| 순서 | Feature | 기간 | 핵심 내용 |
+|------|---------|------|----------|
+| 1 | MVP (z_mvp) | 6/14~6/15 | 얼굴 검색, 업로드, 이벤트 관리 |
+| 2 | Short URL (z_short-url) | 6/16 | `/e/[shareLink]` 라우팅 |
+| 3 | Pro Plan (z_pro-plan) | 6/24 | 용량 제한, 관리자 API |
+| 4 | Video Support (z_video-support) | 6/24 | Lambda 키프레임 추출, 동영상 검색 |
+| 5 | Expiration Countdown | 6/25 | 만료 D-day UI |
+| 6 | Event Archival | 6/26 | 자동 삭제 파이프라인 |
+| 7 | Mosaic Policy | 6/27 | 타인 얼굴 블러 |
+| 8 | i18n | 6/29 | ko/en/ja 3개 언어 |
+
+8개 기능 모두 requirements, design, tasks 흐름을 거쳤다. 하나하나가 독립된 스펙 디렉토리에 있기 때문에 나중에 "동영상 지원은 어떤 요구사항이었지?" 하고 돌아볼 때도 즉시 찾을 수 있고, 에이전트 역시 기능에 대한 맥락을 조회하여 참고할 수 있었다.
+
+---
+
+## 성과와 회고
+
+### 성과
+- 8개 feature 구현, MVP 수준 프로덕션 런칭 (클로즈 베타)
+  - (2026.06.30 기준) Amazon SES Production Access 가 승인이 안되서 대기중임. 샌드박스에 허가된 이메일만 이메일 인증 가능함.
+- 3개 언어 지원 (한/영/일)
+- AWS 인프라 전체 CDK 관리
+- 동영상 지원 (Lambda 키프레임 추출 포함)
+- 자동 QA 파이프라인
+
+### Kiro 워크플로우가 준 것
+- **일관성**:  수십 세션을 거쳐도 코드 스타일, 아키텍처 결정이 흔들리지 않음
+- **속도**: 스펙이 명확하면 Kiro가 빠르게 구현. 모호하면 느림 - 스펙 작성하고 리뷰에 시간을 쓰는 게 결국 빠르다
+- **품질 게이트**: QA 에이전트 덕분에 "일단 돌아가니까 커밋" 습관이 사라짐
+- **지식 축적**: 문제 -> 레슨런 -> 규칙, 다음 작업 반영의 루프가 프로젝트 성숙도를 높임
+
+### Kiro와 함께 한 나의 역할
+
+이번 프로젝트에서 나는 실행은 Kiro에 위임하고 아이디어와 기획, 기술 결정, 프로젝트 매니징에 힘썼다. 돌이켜보니 내가 했던 가장 큰 의사결정은 재무적인 부분이었다. 2개 계정으로 Kiro Pro Max($100) + Kiro Pro+($40) 플랜을 운용해서 총 $140 비용을 지출했다. 에이전트 멀티 오케스트레이션 툴 중에 회사의 조직도 관점에서 역할을 정의(CEO, CTO, 개발팀, 마케팅팀 등)하고 에이전트를 운용할 수 있게 하는 것이 주요 기능인 도구들이 있다. 이런 툴을 이용해서 보통 인간은 CEO를 하고 에이전트 군단을 운용하려고 하는데, 내 사례를 보면 오히려 CEO보다는 프로젝트를 위한 투자 규모를 판단하고 피투자사가 더 열심히 일하도록 환경을 만들어주는 투자자의 역할이지 않을까 생각이 들었다.

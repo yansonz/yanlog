@@ -1,0 +1,264 @@
+---
+title: "How I Built a Face Recognition Photo App MVP with Kiro's Workflow"
+date: "2026-06-30"
+description: "Steering Files, Spec-driven Development, Agent QA: how I launched iwasthere.pics solo using Kiro's structured workflow"
+tags: ["kiro", "aws", "iwasthere", "nextjs", "face-recognition", "spec-driven-development"]
+locale: "en"
+slug: "how-i-built-iwasthere-mvp-with-kiro-workflow-20260630"
+draft: false
+---
+
+I'm not a developer. Infrastructure ops isn't really my thing either. My role in this project was defining problems, making architecture decisions, and setting quality standards. Kiro handled the code. What I did was decide *what* to build and *what level of quality* it needed to hit. After about 10 days of work, I shipped the MVP I'd been aiming for to production. Here's how it went, with a focus on the Kiro workflow experience.
+
+---
+
+## Project Overview
+
+### What is it?
+
+At events, you take or get photographed dozens, sometimes hundreds of times. A few days later, the shared album drops and you're scrolling through 300+ photos looking for "wait, where are my pictures?" Most of the time you give up without finding yours, or miss the album entirely because you didn't know it was shared. I'm active in places where people gather: CrossFit boxes, developer events, AWS user communities. So this friction bothered me for a long time. I always wanted to fix it.
+
+**iwasthere** is the service I built to solve that. Event organizers just upload all the photos at once — no need to sort by person and send individually. Attendees can find their photos from the shared album in about 5 seconds using face recognition.
+
+<figure>
+
+![Find your own photos with your face](https://images.yanbert.com/blog/images/how-i-built-iwasthere-with-kiro-workflow-20260630/iwt-en.webp)
+<figcaption>Find your own photos with your face</figcaption>
+
+</figure>
+
+### Project Info
+- **Service**: [iwasthere.pics](https://iwasthere.pics)
+- **Tech stack**: Next.js 16 + React 19, Tailwind + shadcn/ui, Drizzle ORM + Aurora PostgreSQL (pgvector), InsightFace (Python), AWS ECS Fargate/ALB/S3/SQS/CloudFront/SES/Lambda/CodeDeploy
+- **Timeline**: ~15 days (June 2026)
+- **Team**: 1 human + Kiro
+
+### Kiro Directory Structure
+```markdown
+.kiro/
+├── steering/          # Project rules (always referenced)
+│   ├── project.md         # Tech stack, code rules, security, "don't do this"
+│   ├── design-system.md   # Color tokens, typography, component specs
+│   ├── verification.md    # QA automation rules, testing requirements
+│   └── progress.md        # Current progress (context persistence across sessions)
+├── specs/             # Per-feature specs (requirements -> design -> tasks)
+│   ├── i18n/
+│   ├── mosaic-policy/
+│   ├── event-archival/
+│   ├── z_mvp/         # z_ prefix = completed archive, sits lower in file listing
+│   ├── z_video-support/
+│   └── ...
+└── agents/            # QA automation agents
+    ├── qa1-api.json
+    └── qa2-playwright.json
+```
+
+---
+
+## Project Rules (Steering)
+
+### The Core
+
+`steering/project.md` is basically the law of the land for this project. Kiro references it every session, and all generated code follows these rules. It fails sometimes, usually when something is too vague or conflicts with something else, which means it needs to be rewritten more precisely.
+
+```markdown
+## MVP Tech Stack
+- Frontend: Next.js 16 (App Router) + TypeScript strict
+- Hosting: Amazon ECS Fargate + ALB (CodeDeploy Blue/Green, GitHub Actions CI/CD)
+- DB: Amazon Aurora Serverless v2 (PostgreSQL + pgvector) + Drizzle ORM
+- Auth: Custom Email OTP (SES delivery + DB storage + bcrypt verification) + session cookies
+- Email: Amazon SES v2 (OTP, upgrade notifications, etc.)
+- Face Engine: InsightFace on Amazon ECS Fargate (Python FastAPI)
+- Video Processing: Lambda (Docker, keyframe-extractor) - S3 videos/ upload trigger -> ffmpeg keyframe extraction
+- Queue: Amazon SQS (async indexing)
+
+## Don't do this
+- No over-engineering. Stay true to the MVP.
+```
+
+One important rule I added midway through was the **async/I-O tech selection principle**:
+
+```markdown
+## Async/I-O Tech Selection Principles (Required)
+- In asyncio environments, use native async libraries for I/O (DB: asyncpg, HTTP: httpx)
+- Never wrap sync libraries with run_in_executor
+- Timeouts must be verified to actually disconnect
+```
+
+I added this after seeing real performance issues during implementation and testing. The core idea of Kiro's workflow, as I see it, is that **improvements become the next rule**. Lessons learned feed directly back into the system.
+
+### Keeping Context Alive Across Sessions
+
+One of the biggest weaknesses with AI coding agents is that **they forget everything when you start a new session**. My setup runs Kiro CLI in multiple workspaces in [CMUX](https://cmux.com) (each as a tab on the left panel). One workspace for coding, another for infra work, another for security reviews. Each had its own session context. The fix I landed on was simple: each agent writes and reads from a shared `progress.md` file to track what's been done.
+
+```markdown
+# iwasthere — Current Progress
+
+## Deployment Environment
+- URL: https://iwasthere.pics
+- AWS Account: (***)
+- Region: (***)
+- ECS Cluster: iwasthere (nextjs + face-engine services)
+- CI/CD: GitHub Actions → ECR → ECS rolling update
+
+## Completed
+- ✅ Full infra deployed with CDK (VPC, Aurora, S3, CloudFront, SQS, Cognito, ECS)
+- ✅ Indexing hang/failure fully resolved (2026-06-22)
+- ✅ Video support implemented (2026-06-24)
+- ✅ Domain migration (2026-06-26)
+- ✅ i18n support — ko/en/ja (2026-06-29)
+...
+```
+
+Even in a fresh session, Kiro could immediately pick up "what's done, what's left" and continue with the existing context. One downside: steering files get loaded into context every session, which burns tokens unnecessarily. That's something I'll need to optimize later.
+
+---
+
+## Spec-driven Development
+
+Kiro's spec mode lets you write and manage three documents per feature. Following the natural flow of building something: define requirements, design the solution, then plan the actual implementation.
+
+```markdown
+1. requirements.md  ->  "What are we building?" (user stories + acceptance criteria)
+2. design.md        ->  "How are we building it?" (architecture, API, data model)
+3. tasks.md         ->  "In what order?" (checkbox list)
+```
+
+### Real Example: i18n Feature
+
+Requirements are written using the EARS (Easy Approach to Requirements Syntax) pattern, which can look a bit stiff at first. But it removes ambiguity for both humans and AI agents, and locks in clear acceptance criteria.
+
+`requirements.md` defines user stories like this:
+
+```markdown
+### Requirement 1: next-intl infrastructure and URL prefix routing
+
+**User Story:** As a participant or uploader, I want to see the UI automatically
+in my browser language, so that I can use the service comfortably without any setup.
+
+#### Acceptance Criteria
+1. THE System SHALL implement i18n using the next-intl library.
+2. THE System SHALL determine locale using URL prefix.
+3. WHEN locale is ko, THE System SHALL allow omitting the URL prefix.
+```
+
+This format means Kiro knows **exactly what to build**. It's not "just add i18n." The acceptance criteria are clear, so verification after implementation can be automated too.
+
+### Archiving Completed Specs
+
+Completed specs get a `z_` prefix on the folder name:
+
+```markdown
+specs/
+├── i18n/              ← in progress
+├── mosaic-policy/     ← in progress
+├── z_mvp/             ← done
+├── z_video-support/   ← done
+├── z_pro-plan/        ← done
+└── z_short-url/       ← done
+```
+
+You can read project status just from the file system, and in the IDE the in-progress items naturally float to the top of the listing. Simple but effective.
+
+---
+
+## QA Automation (Agents)
+
+I set up agents to run QA automatically with every code change. Even if you define a minimal MVP feature ("upload photos, search by face"), you inevitably add things and the internal implementation gets messier than expected. When that happens:
+
+1. Does the new code actually work as intended?
+2. Did the new code break something that was working before?
+
+You need to test this repeatedly. So I set up test cases to run on every change: static analysis (tsc), unit/integration tests (vitest), and API smoke tests.
+
+### qa1-api Agent
+
+```json
+{
+  "name": "qa1-api",
+  "description": "API-level QA agent — tsc + vitest + API smoke test",
+  "prompt": "You are a QA expert. ...",
+  "toolsSettings": {
+    "shell": {
+      "allowedCommands": [
+        "npx tsc.*",
+        "npm run (test|lint|build).*",
+        "curl -s http://localhost:3000.*"
+      ]
+    }
+  }
+}
+```
+
+The workflow:
+1. Code change complete
+2. Kiro automatically runs the qa1-api sub-agent
+3. Validates in order: `tsc -> lint -> vitest`
+4. On FAIL: error analysis + fix suggestions -> fix -> rerun
+5. On PASS: ready to commit
+
+### qa2-playwright Agent
+
+Before any push, I wanted to validate against real user scenarios, so I defined a `qa2-playwright` (E2E test) agent and tied it to a git pre-push hook. Nothing gets pushed without all tests passing. In practice, problems still slip through, but at least **"no merging to main without tests"** is guaranteed by the system. And you can keep strengthening test cases over time to raise coverage and lower the failure rate. Having that safety net gave me a lot more confidence to use `/goal` aggressively in the second half of the project.
+
+---
+
+## Debugging with Kiro (/goal)
+
+The hardest (and most impressive) debugging experience in the whole project was tracking down an indexing outage. The SQS worker was hanging intermittently. I banged my head against it for hours, then handed it off to Kiro via the `/goal` command. Kiro built a systematic set of hypotheses, ran through them, and solved it.
+
+The root cause? Embarrassingly simple. During debugging, I'd spun up 2 temporary tasks with `run-task` and just... left them running. Those zombie tasks were consuming SQS messages on old code versions, causing the intermittent indexing failures.
+
+But what really impressed me was what happened *during* the debugging process. Kiro didn't just fix the bug. It **fed the lessons learned back into the steering rules**:
+
+```markdown
+### Async/I-O Tech Selection Principles — Indexing Outage Post-Mortem
+> Added 2026-06-21
+
+- In asyncio environments, use native async libraries for I/O
+- Never wrap sync libraries with run_in_executor
+- Core paths must run concurrent N-request load tests before deployment
+```
+
+That addition becomes a safeguard against repeating the same mistake. The next time Kiro tries to write similar code, it checks the steering file and pushes back.
+
+---
+
+## Development Timeline
+
+| # | Feature | Period | What it is |
+|---|---------|--------|------------|
+| 1 | MVP (z_mvp) | 6/14~6/15 | Face search, upload, event management |
+| 2 | Short URL (z_short-url) | 6/16 | `/e/[shareLink]` routing |
+| 3 | Pro Plan (z_pro-plan) | 6/24 | Storage limits, admin API |
+| 4 | Video Support (z_video-support) | 6/24 | Lambda keyframe extraction, video search |
+| 5 | Expiration Countdown | 6/25 | D-day countdown UI |
+| 6 | Event Archival | 6/26 | Auto-delete pipeline |
+| 7 | Mosaic Policy | 6/27 | Blur other people's faces |
+| 8 | i18n | 6/29 | ko/en/ja support |
+
+All 8 features went through the requirements, design, tasks flow. Each one lives in its own spec directory, so when I want to go back and ask "what were the requirements for video support again?" I can find it instantly. The agents can look it up too.
+
+---
+
+## Results and Reflection
+
+### What shipped
+- 8 features, MVP-level production launch (closed beta)
+  - (As of 2026-06-30) Amazon SES Production Access is still pending approval. Only pre-verified email addresses can use email authentication while we're in the sandbox.
+- 3 language support (Korean/English/Japanese)
+- Full AWS infrastructure managed with CDK
+- Video support (Lambda keyframe extraction included)
+- Automated QA pipeline
+
+### What Kiro's workflow gave me
+- **Consistency**: Code style and architecture decisions stayed stable across dozens of sessions
+- **Speed**: Clear specs = fast implementation. Vague specs = slow. Spending time writing and reviewing specs is actually faster in the end
+- **Quality gate**: The QA agents killed the "it kind of works, just commit it" habit
+- **Knowledge accumulation**: The problem -> lesson -> rule, next task loop genuinely raises the project's maturity over time
+
+### My Role in All This
+
+In this project, I delegated execution to Kiro and focused on ideas, planning, technical decisions, and project management. Looking back, the biggest decision I made was financial. I ran two accounts with Kiro Pro Max ($100) + Kiro Pro+ ($40), spending $140 total.
+
+There are multi-agent orchestration tools out there that let you define roles like an org chart (CEO, CTO, dev team, marketing, etc.) and run agent swarms. The typical setup has a human playing CEO while commanding an army of agents. But my experience makes me think the role is closer to that of an investor: someone who decides how much to put into a project and then sets up the environment for the investee to do their best work. Less CEO, more VC.
